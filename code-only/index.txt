@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jeffrey D. Moir | Profile</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js"></script>
+</head>
+
+<body>
+
+  <header>
+    <button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark theme">
+      <span class="theme-icon theme-sun" aria-hidden="true">☀️</span>
+      <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
+      <span class="theme-knob" aria-hidden="true"></span>
+    </button>
+
+    <h1>Jeffrey D. Moir</h1>
+    <p>A career changer learning AI engineering</p>
+    <img src="https://placehold.co/200x200" alt="Profile photo of Jeffrey D. Moir" width="200" height="200">
+  </header>
+
+  <nav>
+    <ul>
+      <li><a href="#about" data-text="About">About</a></li>
+      <li><a href="#skills" data-text="Skills">Skills</a></li>
+      <li><a href="#projects" data-text="Projects">Projects</a></li>
+      <li><a href="#contact" data-text="Contact">Contact</a></li>
+    </ul>
+  </nav>
+
+  <main>
+
+    <section id="about">
+      <h2>About</h2>
+      <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+    </section>
+
+    <section id="skills">
+      <h2>Skills</h2>
+      <ul>
+        <li>Quality Control</li>
+        <li>Lean Six Sigma Green Belt</li>
+        <li>Database Management</li>
+        <li>Root Cause Analysis</li>
+      </ul>
+    </section>
+
+    <section id="projects">
+      <h2>Projects</h2>
+      <p>I am working on a website for Moon Dragon Games, a local game store in Everett, WA.</p>
+    </section>
+
+    <section id="contact">
+      <h2>Contact</h2>
+
+      <form>
+
+        <p>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" pattern="\p{L}[\p{L}\p{M}'’ .\-]*" title="Please use letters, spaces, hyphens, apostrophes, or periods." required>
+        </p>
+
+        <p>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </p>
+
+        <p>
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone">
+        </p>
+
+        <p>
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="general">General</option>
+            <option value="project-inquiry">Project inquiry</option>
+            <option value="other">Other</option>
+          </select>
+        </p>
+
+        <p>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" placeholder="Tell me what you'd like to talk about..." required></textarea>
+        </p>
+
+        <p>
+          <input type="checkbox" id="subscribe" name="subscribe" value="yes">
+          <label for="subscribe">Subscribe me to occasional updates.</label>
+        </p>
+
+        <p hidden aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </p>
+
+        <p>
+          <button type="submit">Send message</button>
+          <button type="reset">Reset</button>
+        </p>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Jeffrey D. Moir. All rights reserved.</p>
+  </footer>
+
+</body>
+
+</html>

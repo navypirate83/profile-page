@@ -1,0 +1,9 @@
+# ============================================================
+# FILE OVERVIEW: .gitignore
+# ============================================================
+# Lists files and folders that Git should NOT track or upload to GitHub.
+# Each line is a name or pattern. Lines starting with # are comments.
+
+# Claude Code's local settings for this project (the preview server setup).
+# It's only useful on this computer, so it stays out of the repository.
+.claude/

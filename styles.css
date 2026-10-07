@@ -1,0 +1,731 @@
+/*
+  ============================================================
+  FILE OVERVIEW: styles.css, the look and layout for index.html
+  ============================================================
+  CSS (Cascading Style Sheets) controls how the page looks: colors,
+  fonts, spacing, and layout. Each "rule" has two parts:
+    - a selector (WHICH elements to style, e.g. "nav ul")
+    - declarations inside { } (HOW to style them, e.g. "color: red;")
+  Comments like this one, between slash-star and star-slash, are
+  skipped by the browser. They're notes for whoever reads the code.
+
+  Sections in this file, from top to bottom:
+    1. Color palette (variables), with light and dark versions
+    2. Base page setup (body, fonts, centering)
+    3. Headings and text
+    4. Header (name, tagline, photo)
+   4b. Theme slide switch (top right)
+    5. Navigation (flexbox)
+    6. Main sections (spacing between sections)
+    7. Skills (grid)
+    8. Contact form (inputs, focus states, buttons)
+    9. Footer
+   10. Responsive layout: the @media block for screens 768px and wider
+   11. Tablet tweaks: the @media block for screens 768px to 1023px only
+
+  MOBILE FIRST: sections 1-9 style the page for phones. Sections 10 and 11
+  at the very bottom adjust it for bigger screens, using two breakpoints:
+    - under 768px          = phone   (sections 1-9 only)
+    - 768px to 1023px      = tablet  (sections 1-9, plus 10, plus 11)
+    - 1024px and wider     = desktop (sections 1-9, plus 10)
+
+  About "rem": 1rem = the browser's base font size (usually 16px).
+  Using rem for spacing means everything grows or shrinks together
+  if someone raises their browser's text size.
+*/
+
+
+/* ===== 1. COLOR PALETTE =====
+   :root means "the whole page." The names starting with -- are
+   "custom properties" (variables): a color is defined once here and
+   reused everywhere with var(--name). To change a color across the
+   whole site, you only change it in this one spot.
+   Only three colors are used, as planned.
+   color-scheme: light tells the browser to draw its own built-in parts
+   (scrollbars, the dropdown menu, the checkbox) in their light style. */
+:root {
+  --color-background: #f7f6f3; /* warm off-white for the page background */
+  --color-text: #1f2328;       /* near-black for body text (softer on the eyes than pure #000000) */
+  --color-accent: #2f5d8a;     /* calm blue for headings, links, and highlights */
+  color-scheme: light;
+
+  /* SHADOW: used to make cards look slightly raised off the page.
+     It isn't a fourth palette color. It's a see-through version of the near-black text color.
+     rgb(31 35 40 / 0.08) = red 31, green 35, blue 40 (the same as #1f2328), at 8% strength.
+     The two shadows are stacked: a tight one right under the card, and a wide soft one around it. */
+  --shadow: 0 1px 2px rgb(31 35 40 / 0.08), 0 4px 12px rgb(31 35 40 / 0.08);
+  /* A slightly stronger shadow, for when the mouse is over a skill card. */
+  --shadow-hover: 0 2px 4px rgb(31 35 40 / 0.1), 0 8px 20px rgb(31 35 40 / 0.12);
+}
+
+/* DARK THEME: the same three color names, given dark-mode values.
+   :root[data-theme="dark"] means "the <html> element, but only when it has
+   data-theme="dark"." script.js adds that when dark mode is chosen.
+   Because every rule below uses var(--color-...), swapping these three values
+   recolors the whole page at once.
+   The accent is a lighter blue here, because the original dark blue would be
+   hard to read on a dark background. */
+:root[data-theme="dark"] {
+  --color-background: #1a1d21; /* deep charcoal (softer than pure black) */
+  --color-text: #e6e4df;       /* warm off-white text */
+  --color-accent: #8db8e3;     /* light blue for headings, links, and highlights */
+  color-scheme: dark;
+
+  /* Dark-mode shadows: stronger and fully dark (black at 35-50%), because a faint
+     shadow disappears against a dark background. */
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.35), 0 4px 12px rgb(0 0 0 / 0.35);
+  --shadow-hover: 0 2px 4px rgb(0 0 0 / 0.4), 0 8px 20px rgb(0 0 0 / 0.5);
+}
+/* ===== END OF COLOR PALETTE ===== */
+
+
+/* ===== 2. BASE PAGE SETUP ===== */
+
+/* Makes width and height include padding and borders. Without this, adding
+   padding to a full-width input would make it wider than its container.
+   The * means "every element," and ::before/::after cover the extra bits CSS can add. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* The body is the whole visible page.
+   - font-family: a "system font stack." system-ui uses the computer's own built-in
+     font (Segoe UI on Windows, San Francisco on Mac). If that's unavailable, the
+     browser tries the next name in the list, ending with any sans-serif font.
+     Nothing is downloaded, so text appears instantly.
+   - font-size uses clamp() so the text grows smoothly from 16px on a phone to 18px on
+     a desktop, with no breakpoints. See "FLUID FONT SIZES" in section 3 for how it works.
+   - line-height 1.6 = space between lines, 1.6 times the text size, for easy reading.
+   - MOBILE FIRST: these are the PHONE settings. Larger screens change them in the
+     "RESPONSIVE LAYOUT" section at the bottom of this file.
+   - margin: 0 = no extra space around the page, so it uses the full phone width.
+   - padding = slim breathing room inside the edges (1rem left/right) so text never
+     touches the screen edge. The top is taller (3.75rem) so the theme slide switch,
+     which is pinned to the top-right corner, doesn't sit on top of my name. */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(1rem, 0.93rem + 0.31vw, 1.125rem);
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  margin: 0;
+  padding: 3.75rem 1rem 2rem;
+}
+
+/* SMOOTH SCROLLING: when a nav link is clicked, the page glides down to its section
+   instead of jumping there instantly. "html" is the whole page, which is what scrolls. */
+html {
+  scroll-behavior: smooth;
+}
+
+/* For people who turned on "reduce motion" in their computer settings, go back to the
+   instant jump, since a gliding page can make some people feel dizzy. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Leaves 1.5rem of space above a section when a nav link jumps to it, so its heading
+   doesn't sit pressed against the very top edge of the screen. */
+main section {
+  scroll-margin-top: 1.5rem;
+}
+
+/* Images never grow wider than their container (important on small phone screens).
+   height: auto keeps the picture's shape from getting squished. */
+img {
+  max-width: 100%;
+  height: auto;
+}
+/* ===== END OF BASE PAGE SETUP ===== */
+
+
+/* ===== 3. HEADINGS AND TEXT ===== */
+
+/* FLUID FONT SIZES WITH clamp()
+   Instead of jumping between fixed sizes at breakpoints, the main text sizes on this
+   page grow smoothly as the screen gets wider. They use clamp(), which takes 3 values:
+
+       clamp( SMALLEST , PREFERRED , LARGEST )
+
+   - SMALLEST: the size never goes below this (used on small phones).
+   - LARGEST:  the size never goes above this (used on big screens).
+   - PREFERRED: the size in between, which changes with the screen width.
+     It's written like "1.42rem + 2.47vw":
+       * "vw" means "viewport width": 1vw = 1% of the browser window's width.
+         So the vw part grows as the window gets wider.
+       * The rem part is a fixed starting amount. Mixing rem in means the text
+         still grows if someone turns up their browser's text size (an
+         accessibility setting), which pure vw sizes would ignore.
+
+   The numbers are worked out so each size is at its SMALLEST on a 375px-wide phone
+   and reaches its LARGEST on a 1024px-wide screen, growing evenly in between:
+
+       Text            Phone (375px)     Desktop (1024px and wider)
+       Body text       1rem    (16px)    1.125rem (18px)
+       My name (h1)    2rem    (32px)    3rem     (48px)
+       Headings (h2)   1.375rem (22px)   1.75rem  (28px)
+       Tagline         1.1rem  (17.6px)  1.3rem   (20.8px)
+*/
+
+/* All headings use the accent color and a tighter line-height
+   (big text looks too spread out at 1.6). */
+h1,
+h2 {
+  color: var(--color-accent);
+  line-height: 1.2;
+}
+
+/* The page title (my name): large and bold, with no gap above it.
+   Fluid size: 2rem on phones, growing smoothly to 3rem on desktops (see FLUID FONT SIZES above). */
+h1 {
+  font-size: clamp(2rem, 1.42rem + 2.47vw, 3rem);
+  margin: 0 0 0.5rem;
+}
+
+/* Section headings: a thin accent line underneath to separate each section.
+   Fluid size: 1.375rem on phones, growing smoothly to 1.75rem on desktops. */
+h2 {
+  font-size: clamp(1.375rem, 1.16rem + 0.92vw, 1.75rem);
+  margin: 0 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-accent);
+}
+
+/* Paragraphs: remove the default top gap and keep a gap below, so spacing is predictable. */
+p {
+  margin: 0 0 1rem;
+}
+
+/* Links use the accent color. */
+a {
+  color: var(--color-accent);
+}
+/* ===== END OF HEADINGS AND TEXT ===== */
+
+
+/* ===== 4. HEADER (name, tagline, photo) ===== */
+
+/* Centers everything in the header and adds space below it. */
+header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+/* The tagline: slightly larger and a little faded, so the name stands out more.
+   "header p" means "only paragraphs inside the header."
+   Fluid size: 1.1rem on phones, growing smoothly to 1.3rem on desktops. */
+header p {
+  font-size: clamp(1.1rem, 0.98rem + 0.49vw, 1.3rem);
+  opacity: 0.8;
+}
+
+/* The profile photo: border-radius 50% turns the square into a circle,
+   and the border adds an accent-colored ring around it. */
+header img {
+  border-radius: 50%;
+  border: 4px solid var(--color-accent);
+  margin-top: 0.5rem;
+}
+/* ===== END OF HEADER ===== */
+
+
+/* ===== 4b. THEME SLIDE SWITCH (top right) ===== */
+
+/* THE TRACK: the pill-shaped outline the knob slides along.
+   - position: fixed pins it to the screen, so it stays in the top-right corner
+     even while scrolling. top/right set how far it sits from those edges.
+   - width/height plus border-radius 999px (a very large rounding) make a pill shape.
+   - padding: 0 removes the built-in padding buttons have, so the pieces inside line up exactly.
+   - z-index: 10 keeps it on top of any page content that scrolls underneath it.
+   - It uses the page's own colors and a thin 1px outline, so it blends in quietly
+     and switches along with the theme. */
+#theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+  width: 3.25rem;
+  height: 1.75rem;
+  padding: 0;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* THE SUN AND MOON ICONS: both sit inside the track, one at each end.
+   - position: absolute places each one at an exact spot inside the track
+     (the track's own "position: fixed" makes it the reference point).
+   - top: 50% plus translateY(-50%) centers them up-and-down.
+   - width/height match the knob, so each icon sits exactly where the knob stops.
+   - display: grid with place-items: center puts the emoji in the middle of that spot.
+   - z-index: 1 keeps the icons on top of the knob, so the knob shows behind its icon.
+   - opacity: 0.45 fades them, since the inactive one should stay in the background.
+   - transition fades the brightness smoothly when the theme changes. */
+.theme-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  width: 1.375rem;
+  height: 1.375rem;
+  display: grid;
+  place-items: center;
+  font-size: 0.75rem;
+  line-height: 1;
+  opacity: 0.45;
+  transition: opacity 0.2s ease;
+}
+
+/* The sun goes at the left end, the moon at the right end (0.125rem in from each edge). */
+.theme-sun {
+  left: 0.125rem;
+}
+.theme-moon {
+  right: 0.125rem;
+}
+
+/* THE KNOB: the round marker that slides to the active side.
+   - It starts on the left, behind the sun (light theme).
+   - Its fill is a soft, see-through version of the accent color: color-mix blends
+     30% accent with 70% transparent, so it's visible without being loud.
+   - transition makes it glide over 0.2 seconds instead of jumping. */
+.theme-knob {
+  position: absolute;
+  top: 50%;
+  left: 0.125rem;
+  transform: translateY(-50%);
+  width: 1.375rem;
+  height: 1.375rem;
+  border-radius: 50%;
+  background-color: color-mix(in srgb, var(--color-accent) 30%, transparent);
+  transition: transform 0.2s ease;
+}
+
+/* LIGHT THEME (aria-checked="false"): the sun is the active icon, so it's shown at full strength.
+   [aria-checked="false"] means "only when the switch has aria-checked set to false."
+   script.js sets that value. */
+#theme-toggle[aria-checked="false"] .theme-sun {
+  opacity: 1;
+}
+
+/* DARK THEME (aria-checked="true"): the moon is shown at full strength, and the knob
+   slides right by 1.5rem so it sits behind the moon.
+   translate(1.5rem, -50%) = move 1.5rem to the right, and keep it centered up-and-down. */
+#theme-toggle[aria-checked="true"] .theme-moon {
+  opacity: 1;
+}
+#theme-toggle[aria-checked="true"] .theme-knob {
+  transform: translate(1.5rem, -50%);
+}
+
+/* On hover, the outline gets a little thicker, so it's clear the switch reacts. */
+#theme-toggle:hover {
+  box-shadow: 0 0 0 1px var(--color-accent);
+}
+
+/* Keyboard focus ring (shown when someone reaches the switch with the Tab key). */
+#theme-toggle:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+
+/* For people who turned on "reduce motion" in their computer settings: the knob
+   jumps straight to its new side instead of sliding. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-knob,
+  .theme-icon {
+    transition: none;
+  }
+}
+/* ===== END OF THEME SLIDE SWITCH ===== */
+
+
+/* ===== 5. NAVIGATION (flexbox) ===== */
+
+/* The nav bar: thin lines above and below frame the links, with space around them.
+   container-type: inline-size turns the nav into a "container": the rules below can
+   then measure the NAV's own width (not the whole screen's) and react to it. That's
+   what lets the links squeeze together and then stack at exactly the right moment. */
+nav {
+  border-top: 1px solid var(--color-accent);
+  border-bottom: 1px solid var(--color-accent);
+  padding: 0.75rem 0;
+  margin-bottom: 3rem;
+  container-type: inline-size;
+}
+
+/* The list of links, laid out with flexbox, in one horizontal row at every size
+   (until the nav gets too narrow; see the next rule).
+   - display: flex with flex-direction: row puts the links side by side.
+   - justify-content: center keeps the row in the middle.
+   - align-items: center lines the links up neatly across the row.
+   - list-style: none removes the bullet points, and margin/padding 0 removes the
+     default indent that lists have.
+   - gap: the space between links SHRINKS SMOOTHLY as the nav gets narrower:
+       clamp(0rem, 25cqi - 4.5rem, 1rem)
+     * "cqi" = "container query inline": 1cqi = 1% of the nav's width.
+     * So the middle value grows and shrinks with the nav's width. The numbers are
+       worked out so the gap is a full 1rem (16px) when the nav is 352px wide or
+       wider, then shrinks evenly to 0 at 288px wide.
+     * clamp() keeps it between 0 (never negative) and 1rem (never bigger).
+     Each link also has its own padding (see "nav a" below), so even at gap 0 the
+     words still have a little breathing room and never touch. */
+nav ul {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: clamp(0rem, 25cqi - 4.5rem, 1rem);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* WHEN THE LINKS NO LONGER FIT SIDE BY SIDE: stack them, one above the other.
+   @container works like @media, but it checks the nav's width instead of the screen's.
+   The four links need about 270px in a row, so once the nav is narrower than 18rem
+   (288px), they're about to overlap. At that point they switch to a column
+   (flex-direction: column), centered, with a small 0.5rem gap between them.
+   On a phone with this page's side padding, that happens on screens about 320px wide or narrower. */
+@container (max-width: 18rem) {
+  nav ul {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+}
+
+/* The nav links: normal weight, no underline, with a little padding so they're easier to tap.
+   display: inline-grid is part of the "no shifting" trick explained just below. */
+nav a {
+  display: inline-grid;
+  font-weight: 400;
+  text-decoration: none;
+  padding: 0.25rem 0.5rem;
+}
+
+/* THE "NO SHIFTING" TRICK: bold letters are wider than normal ones, so a word that turns
+   bold on hover would get wider and push the other links sideways.
+   To prevent that, ::after adds an invisible bold copy of the word (taken from the
+   link's data-text in index.html) underneath the real one.
+   - content: attr(data-text) = use the data-text value as the copy's text.
+   - visibility: hidden and height: 0 = the copy is invisible and takes no height,
+     but it still takes up its full bold WIDTH.
+   Because the link is an inline-grid, the real word and the copy share one column,
+   which is always as wide as the bold version. So the link's width never changes. */
+nav a::after {
+  content: attr(data-text);
+  font-weight: 700;
+  visibility: hidden;
+  height: 0;
+  overflow: hidden;
+}
+
+/* When the mouse is over a link, or it's reached with the Tab key (:focus-visible),
+   the word turns bold as a hint that it's clickable. No underline. */
+nav a:hover,
+nav a:focus-visible {
+  font-weight: 700;
+}
+/* ===== END OF NAVIGATION ===== */
+
+
+/* ===== 6. MAIN SECTIONS ===== */
+
+/* Generous space below every section so the page breathes.
+   "main section" means "sections inside <main>." */
+main section {
+  margin-bottom: 3rem;
+}
+/* ===== END OF MAIN SECTIONS ===== */
+
+
+/* ===== 7. SKILLS (grid) ===== */
+
+/* The skills list, laid out with CSS grid. "#skills ul" means "the list inside the
+   element with id="skills"" (the # means id).
+   - display: grid arranges the items into rows and columns.
+   - grid-template-columns: 1fr = one column that fills the full width ("1fr" = one
+     equal share of the space). These are the PHONE settings (mobile first), so the
+     skills sit in a single column, one card per row. The "RESPONSIVE LAYOUT" section
+     at the bottom of this file adds more columns on larger screens.
+   - gap: space between the boxes, both across and down.
+   - list-style/padding: remove the bullets and default indent. */
+#skills ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each skill becomes a small raised card: an accent-colored outline, rounded corners,
+   padding inside, and centered text.
+   box-shadow uses the --shadow value from the palette section to lift it off the page.
+   transition makes the hover change below happen smoothly over 0.2 seconds instead of jumping. */
+#skills li {
+  border: 1px solid var(--color-accent);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  text-align: center;
+  font-weight: 500;
+  box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* When the mouse is over a skill card, it rises a little:
+   translateY(-2px) moves it up 2 pixels, and the shadow grows to match. */
+#skills li:hover {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+/* Some people turn on "reduce motion" in their computer settings because movement
+   bothers them. This media query respects that: no sliding, just the shadow change. */
+@media (prefers-reduced-motion: reduce) {
+  #skills li {
+    transition: none;
+  }
+  #skills li:hover {
+    transform: none;
+  }
+}
+/* ===== END OF SKILLS ===== */
+
+
+/* ===== 8. CONTACT FORM ===== */
+
+/* Each field's paragraph gets space below it, so the fields don't feel cramped. */
+form p {
+  margin-bottom: 1.25rem;
+}
+
+/* The whole form becomes one raised card: padding inside so the fields
+   don't touch the edges, a thin border, rounded corners, and the same soft
+   shadow as the skill cards. */
+form {
+  padding: 1.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+}
+
+/* Removes the extra gap under the last row (the buttons), so the space at the
+   bottom of the card matches the space at the top. */
+form p:last-child {
+  margin-bottom: 0;
+}
+
+/* Labels sit on their own line above their field (display: block), in bold. */
+form label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+}
+
+/* The text boxes, dropdown, and message box.
+   input[type="text"] means "inputs whose type is text," and so on.
+   The checkbox isn't in this list on purpose, because a full-width checkbox would look wrong.
+   - width: 100% = full width of the form.
+   - padding = comfortable space inside the box around the text.
+   - font: inherit = use the page's font (form fields don't do this by default).
+   - border / border-radius = a thin outline with slightly rounded corners. */
+form input[type="text"],
+form input[type="email"],
+form input[type="tel"],
+form select,
+form textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font: inherit;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-text);
+  border-radius: 0.375rem;
+}
+
+/* Lets the message box be resized taller or shorter, but not wider (which would break the layout). */
+form textarea {
+  resize: vertical;
+}
+
+/* Placeholder hint text: faded, so it's clearly a hint and not something already typed. */
+form textarea::placeholder {
+  color: var(--color-text);
+  opacity: 0.5;
+}
+
+/* FOCUS STATES: what a field looks like when it's active (clicked into, or reached
+   with the Tab key). A clear focus state shows people, especially keyboard users,
+   exactly where they are in the form.
+   - border-color switches to the accent color.
+   - outline draws a thick accent ring around the box, and outline-offset leaves a
+     small gap between the box and the ring. */
+form input:focus,
+form select:focus,
+form textarea:focus {
+  border-color: var(--color-accent);
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* The checkbox row: the label sits next to the box on the same line (display: inline),
+   in normal weight, instead of on its own line like the other labels.
+   input[type="checkbox"] + label means "the label right after a checkbox." */
+form input[type="checkbox"] + label {
+  display: inline;
+  font-weight: normal;
+  margin-left: 0.4rem;
+}
+
+/* Makes the checkbox a bit bigger and colors its tick mark with the accent color. */
+form input[type="checkbox"] {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-accent);
+  vertical-align: middle;
+}
+
+/* Both buttons: shared size, font, and shape.
+   cursor: pointer shows the "hand" mouse pointer, a hint that it's clickable. */
+form button {
+  font: inherit;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border: 2px solid var(--color-accent);
+  border-radius: 0.375rem;
+  cursor: pointer;
+}
+
+/* "Send message" is the main action, so it's a solid accent-colored button. */
+form button[type="submit"] {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+  margin-right: 0.75rem;
+}
+
+/* "Reset" is a secondary action, so it's only outlined. Making it look less important
+   lowers the chance someone clicks it by mistake and loses what they typed. */
+form button[type="reset"] {
+  background-color: transparent;
+  color: var(--color-accent);
+}
+
+/* When the mouse is over a button, it fades slightly to show it will react. */
+form button:hover {
+  opacity: 0.85;
+}
+
+/* Keyboard focus ring for buttons and links. :focus-visible only shows the ring when
+   someone uses the keyboard (Tab key), not on every mouse click. */
+form button:focus-visible,
+a:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 3px;
+}
+/* ===== END OF CONTACT FORM ===== */
+
+
+/* ===== 9. FOOTER ===== */
+
+/* The footer: a thin line above it, centered smaller text, and space to separate it from the content. */
+footer {
+  border-top: 1px solid var(--color-accent);
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+/* ===== END OF FOOTER ===== */
+
+
+/* ===== 10. RESPONSIVE LAYOUT: TABLETS AND DESKTOPS (768px and wider) =====
+   This file is written "MOBILE FIRST": every rule above is the PHONE version of the
+   page. This block then changes a few things for bigger screens.
+
+   @media (min-width: 768px) is a "media query." The rules inside it only apply when
+   the browser window is at least 768 pixels wide (about the width of a tablet held
+   upright). Below 768px, the browser ignores this whole block and the phone styles
+   above are used as-is.
+
+   Because this block comes LAST in the file, its rules win over the matching
+   phone rules above them (in CSS, when two rules conflict, the later one wins). */
+@media (min-width: 768px) {
+
+  /* PAGE WIDTH: re-centers the page in a comfortable reading column.
+     - max-width 65ch = never wider than about 65 characters ("ch" = the width of the
+       "0" character), so lines don't get too long to read comfortably.
+     - margin: 0 auto = "auto" on the left and right splits the leftover space evenly,
+       which centers the page horizontally.
+     - padding = roomier edges than on phones (3rem top/bottom, 1.5rem left/right). */
+  body {
+    max-width: 65ch;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  /* SKILLS: from one column to as many as fit (2-3 on a tablet or computer).
+     repeat(auto-fit, minmax(12rem, 1fr)) means: make as many columns as will fit,
+     where each column is at least 12rem wide and they share the leftover space
+     equally. */
+  #skills ul {
+    grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  }
+}
+/* ===== END OF RESPONSIVE LAYOUT ===== */
+
+
+/* ===== 11. TABLET TWEAKS (768px to 1023px only) =====
+   The second breakpoint is at 1024px. Tablets get everything from section 10 (the
+   centered page and the skills grid), plus the touch-friendly tweaks below.
+   At 1024px and wider (laptops and desktops, usually used with a mouse), this block
+   switches off again.
+
+   "(min-width: 768px) and (max-width: 1023px)" means BOTH must be true: the window is
+   at least 768px wide AND at most 1023px wide. That range is "tablet size."
+
+   Why these tweaks: tablets are tapped with a finger, which is much less precise than
+   a mouse pointer. A common guideline is that anything tappable should be at least
+   44px (2.75rem) tall, so these rules give the small controls more room. */
+@media (min-width: 768px) and (max-width: 1023px) {
+
+  /* NAV LINKS: bigger tap areas. More padding around each word makes the clickable
+     area larger, and the gap shrinks a little to keep the row about the same width. */
+  nav ul {
+    gap: 0.5rem;
+  }
+  nav a {
+    padding: 0.625rem 1rem;
+  }
+
+  /* FORM FIELDS: a minimum height of 3rem (48px) makes each box an easy target for a
+     finger. min-height means "at least this tall," so the message box can still be taller. */
+  form input[type="text"],
+  form input[type="email"],
+  form input[type="tel"],
+  form select,
+  form textarea {
+    min-height: 3rem;
+  }
+
+  /* CHECKBOX: a bigger box that's easier to tick with a finger. */
+  form input[type="checkbox"] {
+    width: 1.4rem;
+    height: 1.4rem;
+  }
+
+  /* THEME SLIDE SWITCH: 20% bigger, so it's easier to tap.
+     scale(1.2) enlarges it, and transform-origin: top right makes it grow from its
+     top-right corner, so it stays tucked into the same corner instead of drifting. */
+  #theme-toggle {
+    transform: scale(1.2);
+    transform-origin: top right;
+  }
+}
+/* ===== END OF TABLET TWEAKS ===== */

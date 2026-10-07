@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  FILE OVERVIEW: index.html, the personal profile page for Jeffrey D. Moir
+  ============================================================
+  This file holds the page's content and structure (HTML). All of the
+  look and layout (colors, fonts, spacing) lives in a separate file,
+  styles.css, which is linked in the <head> below. The light/dark theme
+  button is powered by a small JavaScript file, script.js, also linked
+  in the <head>. No frameworks are used.
+  Comments like this one are "non-executable": the browser skips them
+  and never shows them on the page. They're notes for whoever reads the code.
+
+  Page layout from top to bottom:
+    1. <header>  : light/dark theme slide switch (pinned to the top right), name, tagline, and profile photo
+    2. <nav>     : navigation links (About, Skills, Projects, Contact)
+    3. <main>    : the main content, split into four sections:
+         - About
+         - Skills
+         - Projects
+         - Contact (a form with name, email, phone, subject, message,
+           a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons)
+    4. <footer>  : copyright line
+
+  The line above this comment, <!DOCTYPE html>, tells the browser
+  "this is a modern HTML5 page." It must always be the very first line.
+-->
+
+<!-- START OF PAGE: <html> wraps the whole page. lang="en" tells browsers and screen readers the page is in English. -->
+<html lang="en">
+
+<!-- ===== HEAD: information ABOUT the page. Nothing in here shows up on the page itself. ===== -->
+<head>
+  <!-- Sets the character encoding so letters, symbols, and punctuation display correctly. -->
+  <meta charset="UTF-8">
+  <!-- Makes the page fit the width of the screen, so it works on phones too. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- The text shown on the browser tab. -->
+  <title>Jeffrey D. Moir | Profile</title>
+  <!-- Links the stylesheet. rel="stylesheet" says "this file is CSS," and href is where to find it
+       (styles.css in the same folder as this page). -->
+  <link rel="stylesheet" href="styles.css">
+  <!-- Loads the JavaScript file that runs the light/dark theme slide switch.
+       It's placed in the <head> (and not at the end of the page) on purpose: it needs to apply
+       a saved theme choice BEFORE the page appears, so the page doesn't flash the wrong colors. -->
+  <script src="script.js"></script>
+</head>
+<!-- ===== END OF HEAD ===== -->
+
+<!-- ===== BODY: everything inside here is what you actually see on the page. ===== -->
+<body>
+
+  <!-- ===== HEADER: the introductory area at the top of the page (name, tagline, photo). ===== -->
+  <header>
+    <!-- THEME SLIDE SWITCH: a small sliding switch that changes the page between light and dark.
+         A sun sits on the left end and a moon on the right end. A round "knob" slides
+         to whichever side is active. styles.css draws it and pins it to the top-right corner.
+         type="button" = a plain button that runs code (it isn't part of the form and doesn't submit anything).
+         id="theme-toggle" = a unique name so script.js can find it.
+         role="switch" = tells screen readers this is an on/off switch, not an ordinary button.
+         aria-checked = whether the switch is "on" ("true" = dark theme, "false" = light theme).
+           script.js flips this value on every click, and styles.css uses it to move the knob.
+         aria-label = the name screen readers announce, e.g. "Dark theme, switch, off".
+         Inside: three <span>s (plain containers with no meaning of their own) for the sun, the moon,
+         and the knob. aria-hidden="true" hides them from screen readers, since they're only decoration. -->
+    <button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark theme">
+      <span class="theme-icon theme-sun" aria-hidden="true">☀️</span>
+      <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
+      <span class="theme-knob" aria-hidden="true"></span>
+    </button>
+
+    <!-- The main heading of the page: my name. A page should have only one <h1>. -->
+    <h1>Jeffrey D. Moir</h1>
+    <!-- A paragraph holding my tagline, which sits right under my name. -->
+    <p>A career changer learning AI engineering</p>
+    <!-- Profile photo (a placeholder image for now).
+         src    = where the image comes from
+         alt    = a text description, read aloud by screen readers and shown if the image fails to load
+         width/height = the image size in pixels, so the page saves the right amount of space while it loads -->
+    <img src="https://placehold.co/200x200" alt="Profile photo of Jeffrey D. Moir" width="200" height="200">
+  </header>
+  <!-- ===== END OF HEADER ===== -->
+
+  <!-- ===== NAV: the navigation menu. <nav> tells browsers and screen readers "these are the main site links." ===== -->
+  <nav>
+    <!-- An unordered list (<ul>) is the standard way to group navigation links. Each <li> is one list item. -->
+    <ul>
+      <!-- Each <a> is a link. href="#about" means "jump to the element on this page with id="about"."
+           The # tells the browser to look on the same page instead of opening a new one.
+           data-text repeats the link's word. styles.css uses it to save room for the bold
+           version of the word, so the links don't shift sideways when one turns bold on hover.
+           (If you rename a link, change its data-text to match.) -->
+      <li><a href="#about" data-text="About">About</a></li>
+      <li><a href="#skills" data-text="Skills">Skills</a></li>
+      <li><a href="#projects" data-text="Projects">Projects</a></li>
+      <li><a href="#contact" data-text="Contact">Contact</a></li>
+    </ul>
+  </nav>
+  <!-- ===== END OF NAV ===== -->
+
+  <!-- ===== MAIN: the central content of the page. A page should have only one <main>. ===== -->
+  <main>
+
+    <!-- ----- ABOUT SECTION: a short introduction about me. A <section> groups related content under its own heading.
+         id="about" is the name the "About" nav link jumps to. ----- -->
+    <section id="about">
+      <!-- Section heading. <h2> is one level below the page's <h1>. -->
+      <h2>About</h2>
+      <!-- A paragraph describing what I'm learning and why. -->
+      <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+    </section>
+    <!-- ----- END OF ABOUT SECTION ----- -->
+
+    <!-- ----- SKILLS SECTION: a list of my professional skills.
+         id="skills" gives this section a unique name. The "Skills" nav link jumps here, and
+         styles.css uses it to lay out just this list as a grid. ----- -->
+    <section id="skills">
+      <!-- Section heading. -->
+      <h2>Skills</h2>
+      <!-- An unordered (bulleted) list, since the order of the skills doesn't matter. Each <li> is one skill. -->
+      <ul>
+        <li>Quality Control</li>
+        <li>Lean Six Sigma Green Belt</li>
+        <li>Database Management</li>
+        <li>Root Cause Analysis</li>
+      </ul>
+    </section>
+    <!-- ----- END OF SKILLS SECTION ----- -->
+
+    <!-- ----- PROJECTS SECTION: the project I'm working on right now.
+         id="projects" is the name the "Projects" nav link jumps to. ----- -->
+    <section id="projects">
+      <!-- Section heading. -->
+      <h2>Projects</h2>
+      <!-- A paragraph describing the current project. -->
+      <p>I am working on a website for Moon Dragon Games, a local game store in Everett, WA.</p>
+    </section>
+    <!-- ----- END OF PROJECTS SECTION ----- -->
+
+    <!-- ----- CONTACT SECTION: a form visitors can fill out to send me a message.
+         id="contact" is the name the "Contact" nav link jumps to. ----- -->
+    <section id="contact">
+      <!-- Section heading. -->
+      <h2>Contact</h2>
+
+      <!-- START OF CONTACT FORM: <form> groups all the fields so they get sent together when the button is clicked.
+           There is no "action" (where to send the data) yet, so for now clicking Send just reloads the page.
+           A real destination will be added later. -->
+      <form>
+
+        <!-- NAME FIELD: <label for="name"> is connected to the input with id="name".
+             That link lets screen readers announce the label, and clicking the label puts the cursor in the box.
+             type="text" = a single line of text. "required" = the browser won't send the form if this is empty.
+             pattern = a rule the entry must match, so real names like "O'Brien", "Mary-Jane", "José", and "Jeffrey D. Moir" work.
+             Reading the rule piece by piece:
+               \p{L}      = the first character must be a letter from any language (so A, z, é, ñ, ü all count)
+               [ ... ]*   = then any number (*) of the characters listed inside the brackets:
+                   \p{L}  = any letter
+                   \p{M}  = accent marks that some keyboards type as a separate piece after a letter
+                   ' and ’ = straight and curly apostrophes (phones often turn ' into ’ automatically)
+                   space and . = for middle names and initials
+                   \-     = a hyphen (the backslash tells the browser it means a real "-")
+             Numbers and other symbols (like @ or #) are still rejected.
+             title = the hint the browser shows when the entry breaks that rule. -->
+        <p>
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" pattern="\p{L}[\p{L}\p{M}'’ .\-]*" title="Please use letters, spaces, hyphens, apostrophes, or periods." required>
+        </p>
+
+        <!-- EMAIL FIELD: type="email" makes the browser check that the entry looks like an email address (has an @, etc.).
+             On phones it also shows a keyboard with the @ key. "required" = must be filled in. -->
+        <p>
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required>
+        </p>
+
+        <!-- PHONE FIELD: type="tel" is for telephone numbers. On phones it shows a number keypad.
+             It doesn't check the format (phone formats differ around the world), and it's optional because it has no "required". -->
+        <p>
+          <label for="phone">Phone</label>
+          <input type="tel" id="phone" name="phone">
+        </p>
+
+        <!-- SUBJECT DROPDOWN: <select> creates a drop-down menu, and each <option> is one choice in it.
+             "value" is what gets sent with the form; the text between the tags is what the visitor sees.
+             The first option is picked by default. -->
+        <p>
+          <label for="subject">Subject</label>
+          <select id="subject" name="subject">
+            <option value="general">General</option>
+            <option value="project-inquiry">Project inquiry</option>
+            <option value="other">Other</option>
+          </select>
+        </p>
+
+        <!-- MESSAGE BOX: <textarea> is a larger, multi-line text box for longer messages.
+             "placeholder" shows grey hint text that disappears when the visitor starts typing.
+             rows = how many lines tall the box starts. "required" = must be filled in. -->
+        <p>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="6" placeholder="Tell me what you'd like to talk about..." required></textarea>
+        </p>
+
+        <!-- SUBSCRIBE CHECKBOX: type="checkbox" is a box the visitor can tick or leave blank.
+             If ticked, the form sends subscribe=yes (the "value"). If left blank, nothing is sent for it.
+             The label comes after the box here, which is the usual order for checkboxes. -->
+        <p>
+          <input type="checkbox" id="subscribe" name="subscribe" value="yes">
+          <label for="subscribe">Subscribe me to occasional updates.</label>
+        </p>
+
+        <!-- HONEYPOT FIELD (anti-spam trap): a field real people never see, so they leave it empty.
+             Spam bots fill in every field they find, so if this one has text, the message is from a bot and can be thrown away.
+             The "hidden" attribute keeps the whole paragraph off the page without needing CSS.
+             aria-hidden="true" = screen readers skip it too.
+             tabindex="-1" = pressing Tab never lands on it.
+             autocomplete="off" = the browser won't auto-fill it for a real visitor by mistake.
+             The name "website" is chosen on purpose because it looks like a normal field to a bot. -->
+        <p hidden aria-hidden="true">
+          <label for="website">Leave this field empty</label>
+          <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+        </p>
+
+        <!-- BUTTONS: both sit in the same paragraph so they appear side by side.
+             type="submit" = sends the form (the browser checks the required fields and the name pattern first).
+             type="reset"  = clears every field back to how it started. It doesn't send anything. -->
+        <p>
+          <button type="submit">Send message</button>
+          <button type="reset">Reset</button>
+        </p>
+
+      </form>
+      <!-- END OF CONTACT FORM -->
+
+    </section>
+    <!-- ----- END OF CONTACT SECTION ----- -->
+
+  </main>
+  <!-- ===== END OF MAIN ===== -->
+
+  <!-- ===== FOOTER: the closing area at the bottom of the page, usually for copyright and contact info. ===== -->
+  <footer>
+    <!-- Copyright line. &copy; is a special code that displays the © symbol. -->
+    <p>&copy; 2026 Jeffrey D. Moir. All rights reserved.</p>
+  </footer>
+  <!-- ===== END OF FOOTER ===== -->
+
+</body>
+<!-- ===== END OF BODY ===== -->
+
+</html>
+<!-- END OF PAGE -->
