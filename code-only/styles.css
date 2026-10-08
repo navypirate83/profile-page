@@ -44,10 +44,6 @@ html {
   }
 }
 
-main section {
-  scroll-margin-top: 1.5rem;
-}
-
 img {
   max-width: 100%;
   height: auto;
@@ -82,6 +78,38 @@ a {
 header {
   text-align: center;
   margin-bottom: 2rem;
+  container-type: inline-size;
+}
+
+.clocks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clock-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
+@container (max-width: 20rem) {
+  .clocks {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
 }
 
 header p {
@@ -218,6 +246,7 @@ nav a:focus-visible {
 
 main section {
   margin-bottom: 3rem;
+  scroll-margin-top: 1.5rem;
 }
 
 #skills ul {
@@ -294,7 +323,7 @@ form textarea {
 
 form textarea::placeholder {
   color: var(--color-text);
-  opacity: 0.5;
+  opacity: 0.65;
 }
 
 form input:focus,

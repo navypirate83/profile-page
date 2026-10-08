@@ -13,7 +13,7 @@
     1. Color palette (variables), with light and dark versions
     2. Base page setup (body, fonts, centering)
     3. Headings and text
-    4. Header (name, tagline, photo)
+    4. Header (clocks, name, tagline, photo)
    4b. Theme slide switch (top right)
     5. Navigation (flexbox)
     6. Main sections (spacing between sections)
@@ -128,12 +128,6 @@ html {
   }
 }
 
-/* Leaves 1.5rem of space above a section when a nav link jumps to it, so its heading
-   doesn't sit pressed against the very top edge of the screen. */
-main section {
-  scroll-margin-top: 1.5rem;
-}
-
 /* Images never grow wider than their container (important on small phone screens).
    height: auto keeps the picture's shape from getting squished. */
 img {
@@ -207,12 +201,62 @@ a {
 /* ===== END OF HEADINGS AND TEXT ===== */
 
 
-/* ===== 4. HEADER (name, tagline, photo) ===== */
+/* ===== 4. HEADER (clocks, name, tagline, photo) ===== */
 
-/* Centers everything in the header and adds space below it. */
+/* Centers everything in the header and adds space below it.
+   container-type: inline-size lets the clocks rule below measure the header's own
+   width (the same trick the nav uses), so the clocks can stack when space runs out. */
 header {
   text-align: center;
   margin-bottom: 2rem;
+  container-type: inline-size;
+}
+
+/* THE TWO CLOCKS: one line, centered, above my name.
+   - display: flex puts the two clocks side by side.
+   - justify-content: center keeps the pair in the middle; align-items: center lines
+     them up with each other.
+   - gap: 2rem of space between the two clocks keeps them clearly separate.
+   - font-size 0.8rem keeps them small and quiet, so my name stays the main focus.
+   - font-variant-numeric: tabular-nums gives every digit the same width, so the clocks
+     don't wiggle sideways when the numbers change (a "1" is normally narrower than an "8").
+   - opacity 0.85 softens them a little, like the tagline.
+   This rule is more specific than "header p" (a class beats a plain tag), so the
+   tagline's bigger font size doesn't apply here. */
+.clocks {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 0 0 1rem;
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.85;
+}
+
+/* Each clock: its label sits above its time (flex-direction: column). */
+.clock {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The small labels ("Local time" / "My time (PDT)"): in capital letters with a little
+   extra spacing between letters, and in the accent color, so they read as labels. */
+.clock-label {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+}
+
+/* VERY NARROW SCREENS: when the header is under 20rem (320px) wide, the two clocks
+   no longer fit side by side, so they stack (flex-direction: column), one above the other. */
+@container (max-width: 20rem) {
+  .clocks {
+    flex-direction: column;
+    gap: 0.4rem;
+  }
 }
 
 /* The tagline: slightly larger and a little faded, so the name stands out more.
@@ -436,10 +480,13 @@ nav a:focus-visible {
 
 /* ===== 6. MAIN SECTIONS ===== */
 
-/* Generous space below every section so the page breathes.
-   "main section" means "sections inside <main>." */
+/* The page's sections. "main section" means "sections inside <main>."
+   - margin-bottom: generous space below every section so the page breathes.
+   - scroll-margin-top: leaves 1.5rem of space above a section when a nav link jumps
+     to it, so its heading doesn't sit pressed against the very top edge of the screen. */
 main section {
   margin-bottom: 3rem;
+  scroll-margin-top: 1.5rem;
 }
 /* ===== END OF MAIN SECTIONS ===== */
 
@@ -554,10 +601,13 @@ form textarea {
   resize: vertical;
 }
 
-/* Placeholder hint text: faded, so it's clearly a hint and not something already typed. */
+/* Placeholder hint text: faded, so it's clearly a hint and not something already typed.
+   opacity 0.65 is as faded as it can be while staying easy to read: it keeps a contrast
+   ratio of at least 4.5 to 1 against the background in both themes (4.8 in light mode,
+   6.3 in dark), which is the readability guideline for normal-size text. */
 form textarea::placeholder {
   color: var(--color-text);
-  opacity: 0.5;
+  opacity: 0.65;
 }
 
 /* FOCUS STATES: what a field looks like when it's active (clicked into, or reached

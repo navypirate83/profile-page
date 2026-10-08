@@ -12,7 +12,8 @@
   and never shows them on the page. They're notes for whoever reads the code.
 
   Page layout from top to bottom:
-    1. <header>  : light/dark theme slide switch (pinned to the top right), name, tagline, and profile photo
+    1. <header>  : light/dark theme slide switch (pinned to the top right), two clocks
+                   (the visitor's time and mine, added by script.js), name, tagline, and profile photo
     2. <nav>     : navigation links (About, Skills, Projects, Contact)
     3. <main>    : the main content, split into four sections:
          - About
@@ -37,10 +38,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- The text shown on the browser tab. -->
   <title>Jeffrey D. Moir | Profile</title>
+  <!-- A one-sentence summary of the page. Search engines like Google show it under the page's
+       title in their results, and apps like texts, Slack, and LinkedIn often show it in link previews. -->
+  <meta name="description" content="Jeffrey D. Moir is a career changer learning AI engineering, with a background in quality control, Lean Six Sigma, and root cause analysis.">
+  <!-- The little icon shown on the browser tab (a "favicon"): my initials, JM, in a blue circle.
+       Instead of pointing at a separate image file, the picture is written right here as SVG code
+       (SVG = a way of describing a drawing with text). "data:image/svg+xml," means "the picture
+       follows in this attribute." %23 is the code for the # sign, which can't be typed directly
+       inside this kind of link. The circle uses the same blue as the page's light-theme accent. -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232f5d8a'/%3E%3Ctext x='32' y='42' font-family='system-ui,Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f7f6f3'%3EJM%3C/text%3E%3C/svg%3E">
   <!-- Links the stylesheet. rel="stylesheet" says "this file is CSS," and href is where to find it
        (styles.css in the same folder as this page). -->
   <link rel="stylesheet" href="styles.css">
-  <!-- Loads the JavaScript file that runs the light/dark theme slide switch.
+  <!-- Loads the JavaScript file that runs the light/dark theme slide switch and the two clocks.
        It's placed in the <head> (and not at the end of the page) on purpose: it needs to apply
        a saved theme choice BEFORE the page appears, so the page doesn't flash the wrong colors. -->
   <script src="script.js"></script>
@@ -50,7 +60,7 @@
 <!-- ===== BODY: everything inside here is what you actually see on the page. ===== -->
 <body>
 
-  <!-- ===== HEADER: the introductory area at the top of the page (name, tagline, photo). ===== -->
+  <!-- ===== HEADER: the introductory area at the top of the page (theme switch, clocks, name, tagline, photo). ===== -->
   <header>
     <!-- THEME SLIDE SWITCH: a small sliding switch that changes the page between light and dark.
          A sun sits on the left end and a moon on the right end. A round "knob" slides
@@ -68,6 +78,12 @@
       <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
       <span class="theme-knob" aria-hidden="true"></span>
     </button>
+
+    <!-- TWO CLOCKS: script.js adds them here, just above my name, when the page loads.
+         They're built by script.js (instead of being written out in this file) because they only
+         work with JavaScript running: this way there are never placeholder dashes or empty clocks
+         on the page, and if JavaScript is off, the clocks simply don't appear.
+         See "CLOCKS" in script.js for the HTML it adds. -->
 
     <!-- The main heading of the page: my name. A page should have only one <h1>. -->
     <h1>Jeffrey D. Moir</h1>
