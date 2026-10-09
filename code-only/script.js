@@ -63,6 +63,7 @@ function addDeleteButton(item, name, nextFocus) {
   button.type = "button";
   button.className = "delete-button";
   button.setAttribute("aria-label", `Delete ${name}`);
+  button.textContent = "✗";
   button.addEventListener("click", () => {
     item.remove();
     nextFocus.focus();

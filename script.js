@@ -174,13 +174,15 @@ function updateCounts() {
 //   name     = what the item is called, for the button's screen-reader label ("Delete Quality Control").
 //   nextFocus = the box to put the keyboard cursor in after deleting, so keyboard users
 //              aren't left with nothing selected when the button disappears.
-// The button has no text inside: styles.css paints the red brush-stroke X on it, and the
-// aria-label gives screen readers its name. Clicking it removes the whole item with item.remove().
+// The button shows a "✗" (a "ballot X" character, which looks hand-drawn); styles.css makes
+// it red. The aria-label gives screen readers a clear name, instead of reading out the symbol.
+// Clicking it removes the whole item with item.remove().
 function addDeleteButton(item, name, nextFocus) {
   const button = document.createElement("button");
   button.type = "button";
   button.className = "delete-button";
   button.setAttribute("aria-label", `Delete ${name}`);
+  button.textContent = "✗";
   button.addEventListener("click", () => {
     item.remove();
     nextFocus.focus();
