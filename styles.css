@@ -605,20 +605,26 @@ details[open] > summary .section-arrow {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-/* When the mouse is over a skill card, it rises a little:
-   translateY(-2px) moves it up 2 pixels, and the shadow grows to match. */
-#skills li:hover {
+/* When the mouse is over a skill card OR a project card, it rises a little:
+   translateY(-2px) moves it up 2 pixels, and the shadow grows to match.
+   The comma means "this rule applies to both," so the two kinds of card always
+   move the same way. (The project cards are styled in section 7b.) */
+#skills li:hover,
+.project-list li:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-2px);
 }
 
 /* Some people turn on "reduce motion" in their computer settings because movement
-   bothers them. This media query respects that: no sliding, just the shadow change. */
+   bothers them. This media query respects that, for both kinds of card: no sliding,
+   just the shadow change. */
 @media (prefers-reduced-motion: reduce) {
-  #skills li {
+  #skills li,
+  .project-list li {
     transition: none;
   }
-  #skills li:hover {
+  #skills li:hover,
+  .project-list li:hover {
     transform: none;
   }
 }
@@ -678,15 +684,19 @@ details[open] > summary .section-arrow {
   padding: 0;
 }
 
-/* Each project card: matches the skill cards (accent outline, rounded corners, shadow).
-   - position: relative lets the delete button be placed in its top-right corner.
-   - The extra right padding (2.75rem) keeps the text from running under the button. */
+/* Each project card: styled the same way as the skill cards (section 7): accent outline,
+   rounded corners, the same soft shadow, and the same smooth rise-and-bigger-shadow on
+   hover (that hover rule is shared with the skill cards in section 7).
+   - position: relative lets the grip handle and delete button sit in its top corners.
+   - The extra left and right padding (2.75rem) keeps the text from running under them.
+   - transition makes the hover rise happen smoothly over 0.2 seconds, like the skill cards. */
 .project-list li {
   position: relative;
   padding: 1rem 2.75rem;
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 /* The project's name in bold, on its own line (display: block), above the description. */
