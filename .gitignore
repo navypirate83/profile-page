@@ -7,3 +7,7 @@
 # Claude Code's local settings for this project (the preview server setup).
 # It's only useful on this computer, so it stays out of the repository.
 .claude/
+
+# VS Code's settings for this project (for example, how to launch Chrome for testing).
+# Like the folder above, it's only useful on this computer.
+.vscode/
