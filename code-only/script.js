@@ -71,10 +71,71 @@ function addDeleteButton(item, name, nextFocus) {
   item.append(button);
 }
 
+function addDragHandle(item, name) {
+  const handle = document.createElement("button");
+  handle.type = "button";
+  handle.className = "drag-handle";
+  handle.textContent = "⠿";
+  handle.setAttribute("aria-label", `Move ${name}. Use the arrow keys to move it.`);
+  handle.addEventListener("pointerdown", (event) => startDrag(event, item));
+  handle.addEventListener("keydown", (event) => moveWithKeys(event, item, handle));
+  item.prepend(handle);
+}
+
+function startDrag(event, item) {
+  event.preventDefault();
+  const list = item.parentElement;
+  item.classList.add("dragging");
+  root.classList.add("is-dragging");
+
+  function onMove(moveEvent) {
+    const x = moveEvent.clientX;
+    const y = moveEvent.clientY;
+    const target = [...list.children].find((other) => {
+      if (other === item) return false;
+      const box = other.getBoundingClientRect();
+      return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
+    });
+    if (!target) return;
+    const box = target.getBoundingClientRect();
+    const sideBySide = box.width < list.clientWidth * 0.9;
+    const afterIt = sideBySide ? x > box.left + box.width / 2 : y > box.top + box.height / 2;
+    if (afterIt) target.after(item);
+    else target.before(item);
+  }
+
+  function onDrop() {
+    item.classList.remove("dragging");
+    root.classList.remove("is-dragging");
+    document.removeEventListener("pointermove", onMove);
+    document.removeEventListener("pointerup", onDrop);
+    document.removeEventListener("pointercancel", onDrop);
+  }
+
+  document.addEventListener("pointermove", onMove);
+  document.addEventListener("pointerup", onDrop);
+  document.addEventListener("pointercancel", onDrop);
+}
+
+function moveWithKeys(event, item, handle) {
+  const earlier = event.key === "ArrowUp" || event.key === "ArrowLeft";
+  const later = event.key === "ArrowDown" || event.key === "ArrowRight";
+  if (earlier && item.previousElementSibling) item.previousElementSibling.before(item);
+  else if (later && item.nextElementSibling) item.nextElementSibling.after(item);
+  else return;
+  event.preventDefault();
+  handle.focus();
+}
+
+function addItemControls(item, name, nextFocus) {
+  addDragHandle(item, name);
+  addDeleteButton(item, name, nextFocus);
+}
+
 function addSkill(text) {
   const item = document.createElement("li");
   item.textContent = text;
-  addDeleteButton(item, text, document.getElementById("new-skill"));
+  addItemControls(item, text, document.getElementById("new-skill"));
   document.getElementById("skill-list").append(item);
 }
 
@@ -85,16 +146,16 @@ function addProject(name, description) {
   const text = document.createElement("p");
   text.textContent = description;
   item.append(title, text);
-  addDeleteButton(item, name, document.getElementById("project-name"));
+  addItemControls(item, name, document.getElementById("project-name"));
   document.getElementById("project-list").append(item);
 }
 
 function setUpManagers() {
   document.querySelectorAll("#skill-list li").forEach((item) => {
-    addDeleteButton(item, item.textContent.trim(), document.getElementById("new-skill"));
+    addItemControls(item, item.textContent.trim(), document.getElementById("new-skill"));
   });
   document.querySelectorAll("#project-list li").forEach((item) => {
-    addDeleteButton(item, item.querySelector("strong").textContent, document.getElementById("project-name"));
+    addItemControls(item, item.querySelector("strong").textContent, document.getElementById("project-name"));
   });
 
   const skillForm = document.getElementById("skill-form");

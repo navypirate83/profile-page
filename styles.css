@@ -18,7 +18,7 @@
     5. Navigation (flexbox)
     6. Main sections (spacing, and the open/close heading rows with arrows)
     7. Skills (grid)
-   7b. Skills Manager, project list, and the red X delete buttons
+   7b. Skills Manager, project list, the red X delete buttons, and drag-to-reorder grips
     8. Contact form (inputs, focus states, buttons, character counts, red email)
     9. Footer
    10. Responsive layout: the @media block for screens 768px and wider
@@ -589,8 +589,9 @@ details[open] > summary .section-arrow {
 
 /* Each skill becomes a small raised card: an accent-colored outline, rounded corners,
    padding inside, and centered text.
-   position: relative lets the red X delete button (section 7b) sit in the card's corner,
-   and the extra left/right padding (2.5rem) keeps the text clear of it while staying centered.
+   position: relative lets the grip handle and the red X delete button (section 7b) sit in
+   the card's top corners, and the extra left/right padding (2.5rem) keeps the text clear of
+   them while staying centered.
    box-shadow uses the --shadow value from the palette section to lift it off the page.
    transition makes the hover change below happen smoothly over 0.2 seconds instead of jumping. */
 #skills li {
@@ -624,7 +625,7 @@ details[open] > summary .section-arrow {
 /* ===== END OF SKILLS ===== */
 
 
-/* ===== 7b. SKILLS MANAGER, PROJECTS, AND DELETE BUTTONS ===== */
+/* ===== 7b. SKILLS MANAGER, PROJECTS, DELETE BUTTONS, AND DRAG GRIPS ===== */
 
 /* THE TWO "ADD" FORMS (Skills Manager and Add a project). They already get the card look
    (border, rounded corners, shadow) from the general "form" rule in section 8.
@@ -682,7 +683,7 @@ details[open] > summary .section-arrow {
    - The extra right padding (2.75rem) keeps the text from running under the button. */
 .project-list li {
   position: relative;
-  padding: 1rem 2.75rem 1rem 1rem;
+  padding: 1rem 2.75rem;
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
@@ -762,7 +763,63 @@ details[open] > summary .section-arrow {
     transform: none;
   }
 }
-/* ===== END OF SKILLS MANAGER, PROJECTS, AND DELETE BUTTONS ===== */
+/* THE GRIP HANDLE ("⠿", added by script.js) in each card's top-left corner, used to drag
+   the card into a new order. It mirrors the delete button in the opposite corner.
+   - cursor: grab shows an open-hand mouse pointer, a hint that it can be picked up.
+   - touch-action: none tells phones and tablets that a finger pressing the grip is
+     dragging the card, not scrolling the page. It's only on the small grip, so swiping
+     anywhere else on the page still scrolls normally.
+   - opacity 0.7 keeps it quiet until the mouse is over it. */
+.drag-handle {
+  position: absolute;
+  top: 0.35rem;
+  left: 0.35rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+  color: var(--color-accent);
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: grab;
+  touch-action: none;
+  opacity: 0.7;
+}
+
+/* On hover the grip shows at full strength. */
+.drag-handle:hover {
+  opacity: 1;
+}
+
+/* Keyboard focus ring for the grip (where the arrow keys move the card). */
+.drag-handle:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 1px;
+  opacity: 1;
+}
+
+/* THE CARD BEING DRAGGED: see-through, with a dashed outline, so it's clear which card
+   is moving. (script.js adds the "dragging" class while the card is held.) */
+.dragging {
+  opacity: 0.55;
+  outline: 2px dashed var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* WHILE ANY DRAG IS HAPPENING (script.js puts "is-dragging" on the <html> element):
+   - the mouse pointer is a closed "grabbing" hand everywhere on the page, and
+   - user-select: none stops text on the page from getting highlighted by accident. */
+.is-dragging,
+.is-dragging * {
+  cursor: grabbing;
+  user-select: none;
+}
+/* ===== END OF SKILLS MANAGER, PROJECTS, DELETE BUTTONS, AND DRAG GRIPS ===== */
 
 
 /* ===== 8. CONTACT FORM ===== */

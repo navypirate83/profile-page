@@ -11,7 +11,8 @@
     3. SECTIONS: opens a section's box when its nav link is clicked.
     4. FORMS: keeps the small character counters under each text box up to date.
     5. SKILLS MANAGER AND PROJECTS: adds new skills and projects from their
-       forms, and gives every skill and project a red X button to delete it.
+       forms, gives every skill and project a red X button to delete it,
+       and lets them be dragged into a new order by their grip handle.
 
   How the theme is applied: this code puts data-theme="light" or
   data-theme="dark" on the <html> element. styles.css has a set of
@@ -190,17 +191,111 @@ function addDeleteButton(item, name, nextFocus) {
   item.append(button);
 }
 
-// Builds a new skill card: an <li> with the skill's text and a delete button,
+// ----- DRAG TO REORDER -----
+// Every skill and project gets a grip handle ("⠿") in its top-left corner. Grabbing the
+// grip and dragging moves the card to a new spot within its own list (skills stay with
+// skills, projects with projects). It works with a mouse, a finger, or a pen, because it
+// uses "pointer events", which treat all three the same way.
+
+// Adds the grip handle to the start of a list item.
+//   item = the <li> to add it to.  name = what the item is called, for the screen-reader label.
+// It's a <button> so keyboard users can reach it with Tab; they move the card with the
+// arrow keys instead of dragging (see moveWithKeys below).
+function addDragHandle(item, name) {
+  const handle = document.createElement("button");
+  handle.type = "button";
+  handle.className = "drag-handle";
+  handle.textContent = "⠿";
+  handle.setAttribute("aria-label", `Move ${name}. Use the arrow keys to move it.`);
+  handle.addEventListener("pointerdown", (event) => startDrag(event, item));
+  handle.addEventListener("keydown", (event) => moveWithKeys(event, item, handle));
+  item.prepend(handle);
+}
+
+// Runs while a card is being dragged, from the moment the grip is pressed until it's let go.
+//   - event.preventDefault() stops the browser from selecting text while dragging.
+//   - The card gets the "dragging" class (styles.css makes it see-through with a dashed
+//     outline) and the page gets "is-dragging" (a "grabbing hand" pointer everywhere).
+//   - onMove runs every time the pointer moves. It looks for another card in the same
+//     list that the pointer is over. If it finds one, it moves the dragged card to just
+//     before or just after it, depending on which half of that card the pointer is on.
+//     The cards rearrange live, so you see the new order while you drag.
+//       * In the skills grid, cards sit side by side, so "which half" is left or right.
+//       * In the projects list, cards are stacked, so "which half" is top or bottom.
+//       * A card narrower than the whole list must be in a grid row, so that decides it.
+//   - onDrop runs when the button or finger is released: it removes the classes and
+//     stops listening. "pointercancel" (e.g. the phone interrupts) is treated the same.
+//   The listeners go on the whole document, not the grip, so the drag keeps working even
+//   while the card (and its grip) are being moved around the page.
+function startDrag(event, item) {
+  event.preventDefault();
+  const list = item.parentElement;
+  item.classList.add("dragging");
+  root.classList.add("is-dragging");
+
+  function onMove(moveEvent) {
+    const x = moveEvent.clientX;
+    const y = moveEvent.clientY;
+    const target = [...list.children].find((other) => {
+      if (other === item) return false;
+      const box = other.getBoundingClientRect();
+      return x >= box.left && x <= box.right && y >= box.top && y <= box.bottom;
+    });
+    if (!target) return;
+    const box = target.getBoundingClientRect();
+    const sideBySide = box.width < list.clientWidth * 0.9;
+    const afterIt = sideBySide ? x > box.left + box.width / 2 : y > box.top + box.height / 2;
+    if (afterIt) target.after(item);
+    else target.before(item);
+  }
+
+  function onDrop() {
+    item.classList.remove("dragging");
+    root.classList.remove("is-dragging");
+    document.removeEventListener("pointermove", onMove);
+    document.removeEventListener("pointerup", onDrop);
+    document.removeEventListener("pointercancel", onDrop);
+  }
+
+  document.addEventListener("pointermove", onMove);
+  document.addEventListener("pointerup", onDrop);
+  document.addEventListener("pointercancel", onDrop);
+}
+
+// Moves a card with the keyboard while its grip is focused:
+//   Up or Left arrow  = one place earlier.   Down or Right arrow = one place later.
+// previousElementSibling / nextElementSibling are the cards just before and after this one.
+// Moving a card takes it out of the page for an instant, which drops the keyboard focus,
+// so handle.focus() puts focus straight back on the grip, ready for the next key press.
+// event.preventDefault() stops the arrow keys from also scrolling the page.
+function moveWithKeys(event, item, handle) {
+  const earlier = event.key === "ArrowUp" || event.key === "ArrowLeft";
+  const later = event.key === "ArrowDown" || event.key === "ArrowRight";
+  if (earlier && item.previousElementSibling) item.previousElementSibling.before(item);
+  else if (later && item.nextElementSibling) item.nextElementSibling.after(item);
+  else return;
+  event.preventDefault();
+  handle.focus();
+}
+// ----- END OF DRAG TO REORDER -----
+
+// Gives a list item both of its controls: the grip handle (top-left) and the red ✗ (top-right).
+function addItemControls(item, name, nextFocus) {
+  addDragHandle(item, name);
+  addDeleteButton(item, name, nextFocus);
+}
+
+// Builds a new skill card: an <li> with the skill's text, a grip handle, and a delete button,
 // then adds it to the end of the skills list.
 function addSkill(text) {
   const item = document.createElement("li");
   item.textContent = text;
-  addDeleteButton(item, text, document.getElementById("new-skill"));
+  addItemControls(item, text, document.getElementById("new-skill"));
   document.getElementById("skill-list").append(item);
 }
 
 // Builds a new project: an <li> holding the name in bold (<strong>) and the description
-// in a paragraph (<p>) underneath, plus a delete button, then adds it to the projects list.
+// in a paragraph (<p>) underneath, plus a grip handle and a delete button, then adds it to the projects list.
 function addProject(name, description) {
   const item = document.createElement("li");
   const title = document.createElement("strong");
@@ -208,11 +303,11 @@ function addProject(name, description) {
   const text = document.createElement("p");
   text.textContent = description;
   item.append(title, text);
-  addDeleteButton(item, name, document.getElementById("project-name"));
+  addItemControls(item, name, document.getElementById("project-name"));
   document.getElementById("project-list").append(item);
 }
 
-// Sets up both "add" forms, and gives the items already on the page their delete buttons.
+// Sets up both "add" forms, and gives the items already on the page their grip handles and delete buttons.
 // For each form, when it's submitted (the Add button, or Enter in a box):
 //   - event.preventDefault() stops the browser's normal behavior (reloading the page);
 //   - .trim() removes spaces from the start and end, so a box with only spaces adds nothing;
@@ -221,10 +316,10 @@ function addProject(name, description) {
 // The boxes' "required" setting stops the form being submitted while a box is empty.
 function setUpManagers() {
   document.querySelectorAll("#skill-list li").forEach((item) => {
-    addDeleteButton(item, item.textContent.trim(), document.getElementById("new-skill"));
+    addItemControls(item, item.textContent.trim(), document.getElementById("new-skill"));
   });
   document.querySelectorAll("#project-list li").forEach((item) => {
-    addDeleteButton(item, item.querySelector("strong").textContent, document.getElementById("project-name"));
+    addItemControls(item, item.querySelector("strong").textContent, document.getElementById("project-name"));
   });
 
   const skillForm = document.getElementById("skill-form");
@@ -268,7 +363,7 @@ function setUpManagers() {
 //      event fires when its Reset button is clicked; setTimeout(..., 0) waits until the
 //      boxes have actually been cleared, then sets the counters back to 0.
 //   6. The Skills Manager and the Add a project form are set up, and every skill and
-//      project already on the page gets its red X delete button. The clocks only show minutes, but checking every second means the
+//      project already on the page gets its grip handle and red X delete button. The clocks only show minutes, but checking every second means the
 //      minute changes within a second of the real clock.
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(root.dataset.theme);
