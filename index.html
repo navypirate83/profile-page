@@ -15,12 +15,14 @@
     1. <header>  : light/dark theme slide switch (pinned to the top right), two clocks
                    (the visitor's time and mine, added by script.js), name, tagline, and profile photo
     2. <nav>     : navigation links (About, Skills, Projects, Contact)
-    3. <main>    : the main content, split into four sections:
+    3. <main>    : the main content, split into four sections. Each one starts closed:
+                   click its heading (or its arrow) to open it, or use the nav links.
          - About
-         - Skills
-         - Projects
+         - Skills (with a Skills Manager for adding skills; each skill has a red X to delete it)
+         - Projects (with a form for adding projects; each project has a red X to delete it)
          - Contact (a form with name, email, phone, subject, message,
-           a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons)
+           a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons;
+           each text box shows a live character count)
     4. <footer>  : copyright line
 
   The line above this comment, <!DOCTYPE html>, tells the browser
@@ -120,44 +122,119 @@
     <!-- ----- ABOUT SECTION: a short introduction about me. A <section> groups related content under its own heading.
          id="about" is the name the "About" nav link jumps to. ----- -->
     <section id="about">
-      <!-- Section heading. <h2> is one level below the page's <h1>. -->
-      <h2>About</h2>
-      <!-- A paragraph describing what I'm learning and why. -->
-      <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      <!-- OPEN/CLOSE BOX: <details> is HTML's built-in "show more / show less" box.
+           Its first child, <summary>, is the part that's always visible and clickable:
+           here, the section heading plus a small arrow. Clicking it shows everything else
+           inside <details>; clicking again hides it. No JavaScript is needed for that part.
+           The box starts closed (it would start open if it had the "open" attribute).
+           The other sections use the same structure. -->
+      <details>
+        <!-- The clickable heading row. <h2> is one level below the page's <h1>.
+             The arrow is drawn by styles.css; aria-hidden="true" hides it from screen readers,
+             which already announce whether the box is open or closed. -->
+        <summary><h2>About</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <!-- A paragraph describing what I'm learning and why. -->
+        <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      </details>
     </section>
     <!-- ----- END OF ABOUT SECTION ----- -->
 
-    <!-- ----- SKILLS SECTION: a list of my professional skills.
+    <!-- ----- SKILLS SECTION: a list of my professional skills, plus a Skills Manager for adding more.
          id="skills" gives this section a unique name. The "Skills" nav link jumps here, and
          styles.css uses it to lay out just this list as a grid. ----- -->
     <section id="skills">
-      <!-- Section heading. -->
-      <h2>Skills</h2>
-      <!-- An unordered (bulleted) list, since the order of the skills doesn't matter. Each <li> is one skill. -->
-      <ul>
-        <li>Quality Control</li>
-        <li>Lean Six Sigma Green Belt</li>
-        <li>Database Management</li>
-        <li>Root Cause Analysis</li>
-      </ul>
+      <!-- Open/close box (see the About section for how <details> and <summary> work). -->
+      <details>
+        <summary><h2>Skills</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+
+        <!-- SKILLS MANAGER: a small form for adding a new skill to the list below.
+             It's a <form>, so pressing Enter in the box adds the skill, just like clicking the button.
+             script.js handles it: it stops the page from reloading, adds the new skill to the list,
+             and clears the box. Nothing is sent anywhere.
+             id="skill-form" = the name script.js uses to find this form.
+             class="manager" = the name styles.css uses to style both "add" forms on the page.
+             aria-labelledby = tells screen readers this form is named by its "Skills Manager" heading.
+             <h3> is one level below the section's <h2>, since this block sits inside the Skills section.
+             The box works like the contact form's boxes: a label, the box, and a character count under it.
+             required = the button won't add an empty skill.
+             maxlength="40" = the box stops accepting letters after 40, so a skill fits on its card. -->
+        <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
+          <h3 id="skills-manager-heading">Skills Manager</h3>
+          <p>
+            <label for="new-skill">New skill</label>
+            <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+            <small class="char-count" data-for="new-skill">0</small>
+          </p>
+          <p>
+            <button type="submit">Add skill</button>
+          </p>
+        </form>
+
+        <!-- THE SKILLS LIST: an unordered list, since the order of the skills doesn't matter.
+             Each <li> is one skill. id="skill-list" = the name script.js uses to add and remove skills.
+             script.js adds the red X delete button to every skill, including these four. -->
+        <ul id="skill-list">
+          <li>Quality Control</li>
+          <li>Lean Six Sigma Green Belt</li>
+          <li>Database Management</li>
+          <li>Root Cause Analysis</li>
+        </ul>
+      </details>
     </section>
     <!-- ----- END OF SKILLS SECTION ----- -->
 
-    <!-- ----- PROJECTS SECTION: the project I'm working on right now.
+    <!-- ----- PROJECTS SECTION: my projects, plus a form for adding more.
          id="projects" is the name the "Projects" nav link jumps to. ----- -->
     <section id="projects">
-      <!-- Section heading. -->
-      <h2>Projects</h2>
-      <!-- A paragraph describing the current project. -->
-      <p>I am working on a website for Moon Dragon Games, a local game store in Everett, WA.</p>
+      <!-- Open/close box (see the About section for how <details> and <summary> work). -->
+      <details>
+        <summary><h2>Projects</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <!-- ADD A PROJECT: a form with two boxes side by side (name and description) and a button.
+             It works the same way as the Skills Manager above: script.js adds the new project to the
+             list below and clears the boxes. Both boxes are required, and each has a character count.
+             maxlength keeps the name to 60 characters and the description to 200. -->
+        <form id="project-form" class="manager" aria-labelledby="add-project-heading">
+          <h3 id="add-project-heading">Add a project</h3>
+          <!-- The two boxes. class="field-row" lets styles.css place them next to each other
+               (and stack them on narrow phone screens). -->
+          <div class="field-row">
+            <p>
+              <label for="project-name">Project name</label>
+              <input type="text" id="project-name" name="project-name" maxlength="60" required>
+              <small class="char-count" data-for="project-name">0</small>
+            </p>
+            <p>
+              <label for="project-description">Project description</label>
+              <input type="text" id="project-description" name="project-description" maxlength="200" required>
+              <small class="char-count" data-for="project-description">0</small>
+            </p>
+          </div>
+          <p>
+            <button type="submit">Add project</button>
+          </p>
+        </form>
+
+        <!-- THE PROJECTS LIST: each <li> is one project, with its name in bold (<strong>) and
+             its description in a paragraph underneath.
+             id="project-list" = the name script.js uses to add and remove projects.
+             script.js adds the red X delete button to every project, including this first one. -->
+        <ul id="project-list" class="project-list">
+          <li>
+            <strong>Moon Dragon Games website</strong>
+            <p>A website for Moon Dragon Games, a local game store in Everett, WA.</p>
+          </li>
+        </ul>
+      </details>
     </section>
     <!-- ----- END OF PROJECTS SECTION ----- -->
 
     <!-- ----- CONTACT SECTION: a form visitors can fill out to send me a message.
          id="contact" is the name the "Contact" nav link jumps to. ----- -->
     <section id="contact">
-      <!-- Section heading. -->
-      <h2>Contact</h2>
+      <!-- Open/close box (see the About section for how <details> and <summary> work).
+           It wraps the heading and the whole form. -->
+      <details>
+      <summary><h2>Contact</h2><span class="section-arrow" aria-hidden="true"></span></summary>
 
       <!-- START OF CONTACT FORM: <form> groups all the fields so they get sent together when the button is clicked.
            There is no "action" (where to send the data) yet, so for now clicking Send just reloads the page.
@@ -181,13 +258,25 @@
         <p>
           <label for="name">Name</label>
           <input type="text" id="name" name="name" pattern="\p{L}[\p{L}\p{M}'’ .\-]*" title="Please use letters, spaces, hyphens, apostrophes, or periods." required>
+          <!-- CHARACTER COUNT: the small number under the box's right edge. <small> is the HTML tag
+               for small side notes. data-for="name" tells script.js which box this counter belongs to,
+               and script.js updates the number as the visitor types. Every text box has one. -->
+          <small class="char-count" data-for="name">0</small>
         </p>
 
-        <!-- EMAIL FIELD: type="email" makes the browser check that the entry looks like an email address (has an @, etc.).
-             On phones it also shows a keyboard with the @ key. "required" = must be filled in. -->
+        <!-- EMAIL FIELD: type="email" makes the browser check that the entry looks like an email address.
+             On phones it also shows a keyboard with the @ key. "required" = must be filled in.
+             pattern = a stricter rule than type="email" alone (which accepts "me@home" with no dot).
+             It needs: something, then @, then something, then a dot, then something:
+               [^@\s]+  = one or more characters that are NOT an @ or a space (\s means any space)
+               @        = exactly one @
+               \.       = a real dot (the backslash means "an actual . character")
+             While the address doesn't match yet, styles.css shows the text in red.
+             title = the hint the browser shows if the form is sent with a bad address. -->
         <p>
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
+          <input type="email" id="email" name="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Please enter an email address like name@example.com." required>
+          <small class="char-count" data-for="email">0</small>
         </p>
 
         <!-- PHONE FIELD: type="tel" is for telephone numbers. On phones it shows a number keypad.
@@ -195,6 +284,7 @@
         <p>
           <label for="phone">Phone</label>
           <input type="tel" id="phone" name="phone">
+          <small class="char-count" data-for="phone">0</small>
         </p>
 
         <!-- SUBJECT DROPDOWN: <select> creates a drop-down menu, and each <option> is one choice in it.
@@ -215,6 +305,7 @@
         <p>
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="6" placeholder="Tell me what you'd like to talk about..." required></textarea>
+          <small class="char-count" data-for="message">0</small>
         </p>
 
         <!-- SUBSCRIBE CHECKBOX: type="checkbox" is a box the visitor can tick or leave blank.
@@ -248,6 +339,7 @@
       </form>
       <!-- END OF CONTACT FORM -->
 
+      </details>
     </section>
     <!-- ----- END OF CONTACT SECTION ----- -->
 

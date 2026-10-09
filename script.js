@@ -2,12 +2,16 @@
   ============================================================
   FILE OVERVIEW: script.js, the light/dark theme switch and the two clocks
   ============================================================
-  JavaScript makes the page interactive. This file does two things:
+  JavaScript makes the page interactive. This file does five things:
     1. THEME: picks the starting theme (a saved choice, or the computer's
        own light/dark setting), applies it right away, and switches it when
        the slide switch is clicked, remembering the choice for next time.
     2. CLOCKS: adds two clocks to the top of the page (the visitor's local
        time and my Pacific time) and updates them every second.
+    3. SECTIONS: opens a section's box when its nav link is clicked.
+    4. FORMS: keeps the small character counters under each text box up to date.
+    5. SKILLS MANAGER AND PROJECTS: adds new skills and projects from their
+       forms, and gives every skill and project a red X button to delete it.
 
   How the theme is applied: this code puts data-theme="light" or
   data-theme="dark" on the <html> element. styles.css has a set of
@@ -130,13 +134,139 @@ function updateClocks() {
 // ===== END OF CLOCKS =====
 
 
+// ===== OPEN/CLOSE SECTIONS =====
+// Each section's content sits in a <details> box, which the browser opens and closes on its
+// own when the heading is clicked. This adds one extra: going to a section by its link
+// (like #skills) opens that section's box if it's closed, so the visitor sees the content.
+//   hash = the part of a link after the # (e.g. "#skills"). querySelector finds the
+//   <details> box inside the element with that id, and adding its "open" attribute
+//   (setAttribute("open", "")) opens it, exactly like writing <details open> in the HTML.
+// The ?. stops this quietly if the link doesn't point at a section with a box.
+function openSection(hash) {
+  if (hash) document.querySelector(`${hash} details`)?.setAttribute("open", "");
+}
+// ===== END OF OPEN/CLOSE SECTIONS =====
+
+
+// ===== CHARACTER COUNTS AND EMAIL CHECK =====
+// Updates every character counter (the <small class="char-count"> under each text box).
+// Each counter's data-for value is the id of its box, e.g. data-for="email".
+// [...box.value].length counts the characters typed. (The [... ] splits the text into
+// characters first, so an emoji counts as 1 instead of 2.)
+// The red email text needs no JavaScript: styles.css handles it with :invalid.
+function updateCounts() {
+  document.querySelectorAll(".char-count").forEach((counter) => {
+    const box = document.getElementById(counter.dataset.for);
+    counter.textContent = [...box.value].length;
+  });
+}
+// ===== END OF CHARACTER COUNTS AND EMAIL CHECK =====
+
+
+// ===== SKILLS MANAGER AND PROJECTS =====
+// New skills and projects are built with document.createElement (which makes a new, empty
+// HTML element) and textContent (which fills it with plain text). textContent is used on
+// purpose instead of innerHTML: whatever a visitor types is always shown as plain text,
+// so typing something like <b> can never be treated as real HTML code.
+
+// Adds a red X delete button to the end of a list item.
+//   item     = the <li> to add the button to.
+//   name     = what the item is called, for the button's screen-reader label ("Delete Quality Control").
+//   nextFocus = the box to put the keyboard cursor in after deleting, so keyboard users
+//              aren't left with nothing selected when the button disappears.
+// The button has no text inside: styles.css paints the red brush-stroke X on it, and the
+// aria-label gives screen readers its name. Clicking it removes the whole item with item.remove().
+function addDeleteButton(item, name, nextFocus) {
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "delete-button";
+  button.setAttribute("aria-label", `Delete ${name}`);
+  button.addEventListener("click", () => {
+    item.remove();
+    nextFocus.focus();
+  });
+  item.append(button);
+}
+
+// Builds a new skill card: an <li> with the skill's text and a delete button,
+// then adds it to the end of the skills list.
+function addSkill(text) {
+  const item = document.createElement("li");
+  item.textContent = text;
+  addDeleteButton(item, text, document.getElementById("new-skill"));
+  document.getElementById("skill-list").append(item);
+}
+
+// Builds a new project: an <li> holding the name in bold (<strong>) and the description
+// in a paragraph (<p>) underneath, plus a delete button, then adds it to the projects list.
+function addProject(name, description) {
+  const item = document.createElement("li");
+  const title = document.createElement("strong");
+  title.textContent = name;
+  const text = document.createElement("p");
+  text.textContent = description;
+  item.append(title, text);
+  addDeleteButton(item, name, document.getElementById("project-name"));
+  document.getElementById("project-list").append(item);
+}
+
+// Sets up both "add" forms, and gives the items already on the page their delete buttons.
+// For each form, when it's submitted (the Add button, or Enter in a box):
+//   - event.preventDefault() stops the browser's normal behavior (reloading the page);
+//   - .trim() removes spaces from the start and end, so a box with only spaces adds nothing;
+//   - the new item is added, then form.reset() clears the boxes, updateCounts() sets their
+//     counters back to 0, and the cursor goes back to the first box, ready for the next one.
+// The boxes' "required" setting stops the form being submitted while a box is empty.
+function setUpManagers() {
+  document.querySelectorAll("#skill-list li").forEach((item) => {
+    addDeleteButton(item, item.textContent.trim(), document.getElementById("new-skill"));
+  });
+  document.querySelectorAll("#project-list li").forEach((item) => {
+    addDeleteButton(item, item.querySelector("strong").textContent, document.getElementById("project-name"));
+  });
+
+  const skillForm = document.getElementById("skill-form");
+  skillForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const box = document.getElementById("new-skill");
+    const skill = box.value.trim();
+    if (skill) addSkill(skill);
+    skillForm.reset();
+    updateCounts();
+    box.focus();
+  });
+
+  const projectForm = document.getElementById("project-form");
+  projectForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const nameBox = document.getElementById("project-name");
+    const name = nameBox.value.trim();
+    const description = document.getElementById("project-description").value.trim();
+    if (name && description) addProject(name, description);
+    projectForm.reset();
+    updateCounts();
+    nameBox.focus();
+  });
+}
+// ===== END OF SKILLS MANAGER AND PROJECTS =====
+
+
 // ===== ONCE THE PAGE HAS LOADED =====
 // The switch and the clocks don't exist yet while the <head> is being read, so this waits
 // for "DOMContentLoaded", which the browser fires once all the HTML has been read. Then:
 //   1. applyTheme again, so the switch's knob matches the theme already applied above.
 //   2. Clicking the switch flips to the opposite theme, applies it, and saves the choice.
 //   3. The clocks are created and filled in right away, then setInterval reruns
-//      updateClocks every 1000 milliseconds (1 second) while the page is open. The clocks only show minutes, but checking every second means the
+//      updateClocks every 1000 milliseconds (1 second) while the page is open.
+//   4. Sections: clicking any nav link opens the section it points to (this runs before
+//      the page scrolls there). If the page was opened with a link that already ends in
+//      a section name (like .../#contact), that section opens straight away.
+//   5. Character counts: the "input" event fires on every keystroke, paste, or delete in
+//      any box on the page, so all the counters update live. The contact form's "reset"
+//      event fires when its Reset button is clicked; setTimeout(..., 0) waits until the
+//      boxes have actually been cleared, then sets the counters back to 0.
+//   6. The Skills Manager and the Add a project form are set up, and every skill and
+//      project already on the page gets its red X delete button. The clocks only show minutes, but checking every second means the
 //      minute changes within a second of the real clock.
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(root.dataset.theme);
@@ -150,5 +280,15 @@ document.addEventListener("DOMContentLoaded", () => {
   createClocks();
   updateClocks();
   setInterval(updateClocks, 1000);
+
+  document.querySelectorAll("nav a").forEach((link) => {
+    link.addEventListener("click", () => openSection(link.hash));
+  });
+  openSection(location.hash);
+
+  document.addEventListener("input", updateCounts);
+  document.querySelector("#contact form").addEventListener("reset", () => setTimeout(updateCounts, 0));
+
+  setUpManagers();
 });
 // ===== END OF ONCE THE PAGE HAS LOADED =====

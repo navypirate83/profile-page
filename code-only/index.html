@@ -38,43 +38,90 @@
   <main>
 
     <section id="about">
-      <h2>About</h2>
-      <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      <details>
+        <summary><h2>About</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      </details>
     </section>
 
     <section id="skills">
-      <h2>Skills</h2>
-      <ul>
-        <li>Quality Control</li>
-        <li>Lean Six Sigma Green Belt</li>
-        <li>Database Management</li>
-        <li>Root Cause Analysis</li>
-      </ul>
+      <details>
+        <summary><h2>Skills</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+
+        <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
+          <h3 id="skills-manager-heading">Skills Manager</h3>
+          <p>
+            <label for="new-skill">New skill</label>
+            <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+            <small class="char-count" data-for="new-skill">0</small>
+          </p>
+          <p>
+            <button type="submit">Add skill</button>
+          </p>
+        </form>
+
+        <ul id="skill-list">
+          <li>Quality Control</li>
+          <li>Lean Six Sigma Green Belt</li>
+          <li>Database Management</li>
+          <li>Root Cause Analysis</li>
+        </ul>
+      </details>
     </section>
 
     <section id="projects">
-      <h2>Projects</h2>
-      <p>I am working on a website for Moon Dragon Games, a local game store in Everett, WA.</p>
+      <details>
+        <summary><h2>Projects</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <form id="project-form" class="manager" aria-labelledby="add-project-heading">
+          <h3 id="add-project-heading">Add a project</h3>
+          <div class="field-row">
+            <p>
+              <label for="project-name">Project name</label>
+              <input type="text" id="project-name" name="project-name" maxlength="60" required>
+              <small class="char-count" data-for="project-name">0</small>
+            </p>
+            <p>
+              <label for="project-description">Project description</label>
+              <input type="text" id="project-description" name="project-description" maxlength="200" required>
+              <small class="char-count" data-for="project-description">0</small>
+            </p>
+          </div>
+          <p>
+            <button type="submit">Add project</button>
+          </p>
+        </form>
+
+        <ul id="project-list" class="project-list">
+          <li>
+            <strong>Moon Dragon Games website</strong>
+            <p>A website for Moon Dragon Games, a local game store in Everett, WA.</p>
+          </li>
+        </ul>
+      </details>
     </section>
 
     <section id="contact">
-      <h2>Contact</h2>
+      <details>
+      <summary><h2>Contact</h2><span class="section-arrow" aria-hidden="true"></span></summary>
 
       <form>
 
         <p>
           <label for="name">Name</label>
           <input type="text" id="name" name="name" pattern="\p{L}[\p{L}\p{M}'’ .\-]*" title="Please use letters, spaces, hyphens, apostrophes, or periods." required>
+          <small class="char-count" data-for="name">0</small>
         </p>
 
         <p>
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
+          <input type="email" id="email" name="email" pattern="[^@\s]+@[^@\s]+\.[^@\s]+" title="Please enter an email address like name@example.com." required>
+          <small class="char-count" data-for="email">0</small>
         </p>
 
         <p>
           <label for="phone">Phone</label>
           <input type="tel" id="phone" name="phone">
+          <small class="char-count" data-for="phone">0</small>
         </p>
 
         <p>
@@ -89,6 +136,7 @@
         <p>
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="6" placeholder="Tell me what you'd like to talk about..." required></textarea>
+          <small class="char-count" data-for="message">0</small>
         </p>
 
         <p>
@@ -108,6 +156,7 @@
 
       </form>
 
+      </details>
     </section>
 
   </main>

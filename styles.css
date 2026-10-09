@@ -16,9 +16,10 @@
     4. Header (clocks, name, tagline, photo)
    4b. Theme slide switch (top right)
     5. Navigation (flexbox)
-    6. Main sections (spacing between sections)
+    6. Main sections (spacing, and the open/close heading rows with arrows)
     7. Skills (grid)
-    8. Contact form (inputs, focus states, buttons)
+   7b. Skills Manager, project list, and the red X delete buttons
+    8. Contact form (inputs, focus states, buttons, character counts, red email)
     9. Footer
    10. Responsive layout: the @media block for screens 768px and wider
    11. Tablet tweaks: the @media block for screens 768px to 1023px only
@@ -40,13 +41,15 @@
    "custom properties" (variables): a color is defined once here and
    reused everywhere with var(--name). To change a color across the
    whole site, you only change it in this one spot.
-   Only three colors are used, as planned.
+   Three main colors are used, as planned, plus one "error" red that only
+   appears to warn about a mistake (the email address while it isn't valid yet).
    color-scheme: light tells the browser to draw its own built-in parts
    (scrollbars, the dropdown menu, the checkbox) in their light style. */
 :root {
   --color-background: #f7f6f3; /* warm off-white for the page background */
   --color-text: #1f2328;       /* near-black for body text (softer on the eyes than pure #000000) */
   --color-accent: #2f5d8a;     /* calm blue for headings, links, and highlights */
+  --color-error: #b42318;      /* deep red for mistakes (easy to read on the light background) */
   color-scheme: light;
 
   /* SHADOW: used to make cards look slightly raised off the page.
@@ -58,10 +61,10 @@
   --shadow-hover: 0 2px 4px rgb(31 35 40 / 0.1), 0 8px 20px rgb(31 35 40 / 0.12);
 }
 
-/* DARK THEME: the same three color names, given dark-mode values.
+/* DARK THEME: the same color names, given dark-mode values.
    :root[data-theme="dark"] means "the <html> element, but only when it has
    data-theme="dark"." script.js adds that when dark mode is chosen.
-   Because every rule below uses var(--color-...), swapping these three values
+   Because every rule below uses var(--color-...), swapping these values
    recolors the whole page at once.
    The accent is a lighter blue here, because the original dark blue would be
    hard to read on a dark background. */
@@ -69,6 +72,7 @@
   --color-background: #1a1d21; /* deep charcoal (softer than pure black) */
   --color-text: #e6e4df;       /* warm off-white text */
   --color-accent: #8db8e3;     /* light blue for headings, links, and highlights */
+  --color-error: #ff8a80;      /* soft coral red for mistakes (a deep red would be too dark to read here) */
   color-scheme: dark;
 
   /* Dark-mode shadows: stronger and fully dark (black at 35-50%), because a faint
@@ -180,13 +184,13 @@ h1 {
   margin: 0 0 0.5rem;
 }
 
-/* Section headings: a thin accent line underneath to separate each section.
+/* Section headings. Each one sits inside its section's clickable heading row
+   (see "OPEN/CLOSE SECTIONS" in section 6, which also draws the line underneath).
+   margin: 0 removes the heading's built-in space, so it lines up with the arrow.
    Fluid size: 1.375rem on phones, growing smoothly to 1.75rem on desktops. */
 h2 {
   font-size: clamp(1.375rem, 1.16rem + 0.92vw, 1.75rem);
-  margin: 0 0 1rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 2px solid var(--color-accent);
+  margin: 0;
 }
 
 /* Paragraphs: remove the default top gap and keep a gap below, so spacing is predictable. */
@@ -481,12 +485,84 @@ nav a:focus-visible {
 /* ===== 6. MAIN SECTIONS ===== */
 
 /* The page's sections. "main section" means "sections inside <main>."
-   - margin-bottom: generous space below every section so the page breathes.
+   - margin-bottom: space below every section, so the headings don't crowd each other
+     when the sections are closed.
    - scroll-margin-top: leaves 1.5rem of space above a section when a nav link jumps
      to it, so its heading doesn't sit pressed against the very top edge of the screen. */
 main section {
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
   scroll-margin-top: 1.5rem;
+}
+
+/* OPEN/CLOSE SECTIONS
+   Each section's content is inside a <details> box, and its heading row is the box's
+   <summary>: the part that's always visible and opens or closes the box when clicked.
+
+   THE HEADING ROW (summary):
+   - display: flex puts the heading on the left and the arrow on the right;
+     justify-content: space-between pushes them to opposite ends;
+     align-items: center lines the arrow up with the middle of the heading.
+   - list-style: none removes the browser's own small triangle marker, since we draw
+     our own arrow. (::-webkit-details-marker below does the same for Safari.)
+   - border-bottom draws the thin accent line under each heading.
+   - cursor: pointer shows the "hand" mouse pointer, a hint that it's clickable. */
+summary {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  list-style: none;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--color-accent);
+  cursor: pointer;
+}
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* While a box is open, leave space between its heading row and the content below.
+   details[open] means "a <details> box that has the open attribute," and the ">"
+   means "the summary directly inside it." */
+details[open] > summary {
+  margin-bottom: 1rem;
+}
+
+/* Keyboard focus ring for the heading row (when reached with the Tab key). */
+summary:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 0.25rem;
+}
+
+/* THE ARROW: a small "v" shape drawn with CSS instead of an image.
+   It's a tiny square showing only two of its borders (right and bottom), turned 45
+   degrees with rotate(45deg), so the two borders form a downward-pointing arrow.
+   - flex-shrink: 0 stops the arrow from being squeezed when the heading is long.
+   - margin-right gives it a little room from the edge, since turning it makes it
+     slightly wider than its box.
+   - transition makes it turn smoothly (0.2 seconds) when the box opens or closes. */
+.section-arrow {
+  flex-shrink: 0;
+  width: 0.6rem;
+  height: 0.6rem;
+  margin-right: 0.35rem;
+  border-right: 2px solid var(--color-accent);
+  border-bottom: 2px solid var(--color-accent);
+  transform: rotate(45deg);
+  transition: transform 0.2s ease;
+}
+
+/* When the box is open, the arrow flips to point up (rotate -135 degrees), as a hint
+   that clicking again will close it. */
+details[open] > summary .section-arrow {
+  transform: rotate(-135deg);
+}
+
+/* For people who turned on "reduce motion": the arrow flips instantly. */
+@media (prefers-reduced-motion: reduce) {
+  .section-arrow {
+    transition: none;
+  }
 }
 /* ===== END OF MAIN SECTIONS ===== */
 
@@ -513,12 +589,15 @@ main section {
 
 /* Each skill becomes a small raised card: an accent-colored outline, rounded corners,
    padding inside, and centered text.
+   position: relative lets the red X delete button (section 7b) sit in the card's corner,
+   and the extra left/right padding (2.5rem) keeps the text clear of it while staying centered.
    box-shadow uses the --shadow value from the palette section to lift it off the page.
    transition makes the hover change below happen smoothly over 0.2 seconds instead of jumping. */
 #skills li {
+  position: relative;
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
-  padding: 1rem;
+  padding: 1rem 2.5rem;
   text-align: center;
   font-weight: 500;
   box-shadow: var(--shadow);
@@ -543,6 +622,159 @@ main section {
   }
 }
 /* ===== END OF SKILLS ===== */
+
+
+/* ===== 7b. SKILLS MANAGER, PROJECTS, AND DELETE BUTTONS ===== */
+
+/* THE TWO "ADD" FORMS (Skills Manager and Add a project). They already get the card look
+   (border, rounded corners, shadow) from the general "form" rule in section 8.
+   This adds space below them, so they stand apart from the list underneath. */
+.manager {
+  margin-bottom: 1.5rem;
+}
+
+/* Each add form's small heading ("Skills Manager", "Add a project"):
+   smaller than the section heading, in the accent color. */
+.manager h3 {
+  margin: 0 0 1rem;
+  font-size: 1.1rem;
+  color: var(--color-accent);
+}
+
+/* NAME AND DESCRIPTION SIDE BY SIDE (the project form).
+   - display: flex puts the two boxes next to each other.
+   - flex-wrap: wrap lets the description move under the name when there isn't room
+     (on phones).
+   - Each box starts at 12rem wide (flex-basis) and grows to share the spare room;
+     flex-grow: 2 on the description gives it twice as much spare room as the name,
+     since descriptions are longer.
+   - The bottom-margin rule makes sure both boxes keep the same space underneath,
+     even though one of them is the last paragraph in its row (section 8 removes the
+     space under a form's last paragraph). */
+.field-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+}
+.field-row p {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+.field-row p:last-child {
+  flex-grow: 2;
+}
+.manager .field-row p {
+  margin-bottom: 1.25rem;
+}
+
+/* THE PROJECTS LIST: one card per project, stacked with a 1rem gap.
+   list-style/margin/padding remove the bullets and default indent. */
+.project-list {
+  display: grid;
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Each project card: matches the skill cards (accent outline, rounded corners, shadow).
+   - position: relative lets the delete button be placed in its top-right corner.
+   - The extra right padding (2.75rem) keeps the text from running under the button. */
+.project-list li {
+  position: relative;
+  padding: 1rem 2.75rem 1rem 1rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 0.5rem;
+  box-shadow: var(--shadow);
+}
+
+/* The project's name in bold, on its own line (display: block), above the description. */
+.project-list strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+/* The description: no extra space under it, so the card ends evenly. */
+.project-list p {
+  margin: 0;
+}
+
+/* EMPTY LISTS: when every item has been deleted, show a short note instead of nothing.
+   :has(li) means "contains a list item," so :not(:has(li)) means "has no items left."
+   ::before adds text from CSS (content: "...") at the start of the list. */
+#skill-list:not(:has(li))::before {
+  content: "No skills yet. Add one above.";
+  opacity: 0.7;
+}
+.project-list:not(:has(li))::before {
+  content: "No projects yet. Add one above.";
+  opacity: 0.7;
+}
+
+/* THE RED PAINTED X DELETE BUTTON on every skill and project.
+   The button itself is invisible (no border, no background): it's just the clickable area.
+   - position: absolute with top/right pins it to the card's top-right corner.
+   - width/height make a small square to click (1.75rem, about 28px). */
+.delete-button {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* THE PAINTED X: drawn inside the button with ::before (an extra piece CSS adds inside
+   an element). It's a red square with a "mask": a stencil that only lets the red show
+   through in the shape of the X, like spray paint through a cut-out.
+   - inset: 0.15rem fills the button, leaving a small margin around the X.
+   - background-color: the error red. Because the color comes from --color-error, it
+     changes with the light and dark themes.
+   - mask (and -webkit-mask, the same thing for Safari and older Chrome) is the stencil.
+     It's a tiny SVG drawing written right in the CSS (like the tab icon in index.html).
+     The drawing is two brush strokes, each thick where the brush lands and tapering to a
+     thin tail, like a quick stroke of paint. A "filter" in the drawing (feTurbulence plus
+     feDisplacementMap) wobbles the edges slightly, so they look rough like real paint
+     instead of perfectly smooth.
+     %3C, %3E, and %23 are codes for <, >, and #, which can't be typed directly here.
+   - transition makes the hover effect below happen smoothly. */
+.delete-button::before {
+  content: "";
+  position: absolute;
+  inset: 0.15rem;
+  background-color: var(--color-error);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cfilter id='paint' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='1.4'/%3E%3C/filter%3E%3Cg filter='url(%23paint)'%3E%3Cpath d='M3 5C3 3.5 4.8 3 5.8 4L20.6 19.3C21.1 19.8 20.6 20.6 20 20.2L4 7C3.4 6.5 3 5.8 3 5Z'/%3E%3Cpath d='M20.5 4.2C21.4 4.8 21.2 6 20.4 6.6L5 20.6C4.4 21.1 3.6 20.5 4 19.9L18.2 4.6C18.9 3.8 19.8 3.7 20.5 4.2Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cfilter id='paint' x='-20%25' y='-20%25' width='140%25' height='140%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='4'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='1.4'/%3E%3C/filter%3E%3Cg filter='url(%23paint)'%3E%3Cpath d='M3 5C3 3.5 4.8 3 5.8 4L20.6 19.3C21.1 19.8 20.6 20.6 20 20.2L4 7C3.4 6.5 3 5.8 3 5Z'/%3E%3Cpath d='M20.5 4.2C21.4 4.8 21.2 6 20.4 6.6L5 20.6C4.4 21.1 3.6 20.5 4 19.9L18.2 4.6C18.9 3.8 19.8 3.7 20.5 4.2Z'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.15s ease;
+}
+
+/* On hover, the X grows a little (scale 1.2) and tilts slightly (rotate 8 degrees),
+   a playful "this will delete it" signal. */
+.delete-button:hover::before {
+  transform: scale(1.2) rotate(8deg);
+}
+
+/* Keyboard focus ring (shown when the button is reached with the Tab key). It's drawn on
+   the button, not the painted X, so the stencil doesn't cut it off. */
+.delete-button:focus-visible {
+  outline: 3px solid var(--color-error);
+  outline-offset: 1px;
+}
+
+/* For people who turned on "reduce motion": no grow-and-tilt on hover. */
+@media (prefers-reduced-motion: reduce) {
+  .delete-button::before {
+    transition: none;
+  }
+  .delete-button:hover::before {
+    transform: none;
+  }
+}
+/* ===== END OF SKILLS MANAGER, PROJECTS, AND DELETE BUTTONS ===== */
 
 
 /* ===== 8. CONTACT FORM ===== */
@@ -596,9 +828,15 @@ form textarea {
   border-radius: 0.375rem;
 }
 
-/* Lets the message box be resized taller or shorter, but not wider (which would break the layout). */
+/* The message box:
+   - resize: vertical lets it be made taller or shorter, but not wider (which would break the layout).
+   - display: block removes a small built-in gap that browsers leave under a textarea
+     (they treat it like a word sitting on a line of text, with room left for letters like
+     "g" and "y" that hang below the line). Without this, its character count would sit
+     lower than the counts under the other boxes. */
 form textarea {
   resize: vertical;
+  display: block;
 }
 
 /* Placeholder hint text: faded, so it's clearly a hint and not something already typed.
@@ -608,6 +846,33 @@ form textarea {
 form textarea::placeholder {
   color: var(--color-text);
   opacity: 0.65;
+}
+
+/* CHARACTER COUNTS: the small numbers under each text box, on the right side.
+   - display: block puts each counter on its own line, right under its box.
+   - text-align: right lines it up with the box's right edge.
+   - font-variant-numeric: tabular-nums gives every digit the same width, so the
+     number doesn't wiggle as it changes.
+   - opacity 0.7 keeps it quiet but still readable (contrast stays above 4.5 to 1). */
+.char-count {
+  display: block;
+  margin-top: 0.25rem;
+  text-align: right;
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+  opacity: 0.7;
+}
+
+/* RED EMAIL TEXT: while the email box holds something that isn't a proper email address
+   yet, its text is red. :invalid means "a form box whose current value breaks its rules"
+   (here, type="email" plus the pattern in index.html). As soon as the address is complete,
+   e.g. name@example.com, it's no longer :invalid and the text goes back to normal.
+   An empty box technically counts as :invalid too (it's required), but with no text in it
+   there's nothing to turn red.
+   #email (an id) is more specific than the "form input[type="email"]" rule above, so
+   this color wins. */
+#email:invalid {
+  color: var(--color-error);
 }
 
 /* FOCUS STATES: what a field looks like when it's active (clicked into, or reached
