@@ -305,6 +305,10 @@ details[open] > summary .section-arrow {
 
 #skills li {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
   padding: 1rem 2.5rem;
@@ -314,16 +318,116 @@ details[open] > summary .section-arrow {
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-#skills li:hover {
+.skill-level {
+  padding: 0.1rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+}
+
+#skills li[data-level="learning"] .skill-level {
+  border-style: dashed;
+}
+
+#skills li[data-level="confident"] .skill-level {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+.skill-name {
+  padding: 0.1rem 0.35rem;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: text;
+}
+
+.skill-name:hover {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+.skill-name:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+.skill-name-input {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  text-align: center;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-accent);
+  border-radius: 0.375rem;
+}
+
+.skill-name-input:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+#skill-count {
+  font-weight: 700;
+}
+
+.skill-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-button {
+  padding: 0.35rem 0.95rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.filter-button:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+.filter-button[aria-pressed="true"] {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+.filter-button:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+#skill-list:not([data-filter="all"]):not(:has(li))::before {
+  content: "No skills at this level yet.";
+}
+
+#skills li:hover,
+.project-list li:hover {
   box-shadow: var(--shadow-hover);
   transform: translateY(-2px);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #skills li {
+  #skills li,
+  .project-list li {
     transition: none;
   }
-  #skills li:hover {
+  #skills li:hover,
+  .project-list li:hover {
     transform: none;
   }
 }
@@ -350,6 +454,13 @@ details[open] > summary .section-arrow {
 .field-row p:last-child {
   flex-grow: 2;
 }
+
+#skill-form .field-row p:first-child {
+  flex-grow: 2;
+}
+#skill-form .field-row p:last-child {
+  flex-grow: 1;
+}
 .manager .field-row p {
   margin-bottom: 1.25rem;
 }
@@ -368,6 +479,7 @@ details[open] > summary .section-arrow {
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
   box-shadow: var(--shadow);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .project-list strong {

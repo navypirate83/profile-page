@@ -17,8 +17,9 @@
    4b. Theme slide switch (top right)
     5. Navigation (flexbox)
     6. Main sections (spacing, and the open/close heading rows with arrows)
-    7. Skills (grid)
-   7b. Skills Manager, project list, the red X delete buttons, and drag-to-reorder grips
+    7. Skills (grid, the level badge, the click-to-edit name, the skill count, and the filter buttons)
+   7b. Skills Manager (with its level dropdown), project list, the red X delete buttons,
+       and drag-to-reorder grips
     8. Contact form (inputs, focus states, buttons, character counts, red email)
     9. Footer
    10. Responsive layout: the @media block for screens 768px and wider
@@ -587,15 +588,21 @@ details[open] > summary .section-arrow {
   padding: 0;
 }
 
-/* Each skill becomes a small raised card: an accent-colored outline, rounded corners,
-   padding inside, and centered text.
-   position: relative lets the grip handle and the red X delete button (section 7b) sit in
-   the card's top corners, and the extra left/right padding (2.5rem) keeps the text clear of
-   them while staying centered.
-   box-shadow uses the --shadow value from the palette section to lift it off the page.
-   transition makes the hover change below happen smoothly over 0.2 seconds instead of jumping. */
+/* Each skill becomes a small raised card (script.js builds these from its "skills" array):
+   an accent-colored outline, rounded corners, padding inside, and centered text.
+   - display: flex with flex-direction: column stacks the skill's name above its level
+     badge, and align-items: center centers them; gap puts a little space between.
+   - position: relative lets the grip handle and the red X delete button (section 7b) sit in
+     the card's top corners, and the extra left/right padding (2.5rem) keeps the text clear of
+     them while staying centered.
+   - box-shadow uses the --shadow value from the palette section to lift it off the page.
+   - transition makes the hover change below happen smoothly over 0.2 seconds instead of jumping. */
 #skills li {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
   border: 1px solid var(--color-accent);
   border-radius: 0.5rem;
   padding: 1rem 2.5rem;
@@ -603,6 +610,142 @@ details[open] > summary .section-arrow {
   font-weight: 500;
   box-shadow: var(--shadow);
   transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/* THE LEVEL BADGE under each skill's name ("learning", "practicing", or "confident").
+   A small pill shape: tiny capital letters with a little letter spacing, in the accent
+   color, inside a rounded outline (border-radius: 999px rounds the ends fully).
+   The three levels look different, so they can be told apart at a glance. Each card's
+   data-level (set by script.js) picks the look. [data-level="learning"] means "a card
+   whose data-level is learning." The badges get more "filled in" as the level goes up: */
+.skill-level {
+  padding: 0.1rem 0.6rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+}
+
+/* Learning: a dashed outline, like something still being sketched in. */
+#skills li[data-level="learning"] .skill-level {
+  border-style: dashed;
+}
+
+/* Practicing: the plain solid outline from the rule above (nothing to change). */
+
+/* Confident: filled in with the accent color, with the text in the background color. */
+#skills li[data-level="confident"] .skill-level {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+/* THE CLICKABLE SKILL NAME (script.js makes it a button, so it can be clicked to edit).
+   It's styled to look like the plain text it replaced: no button border or background,
+   the page's font and text color (inherit = "use the same as the card").
+   cursor: text shows the I-shaped "typing" pointer, a hint that the text can be edited. */
+.skill-name {
+  padding: 0.1rem 0.35rem;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: text;
+}
+
+/* On hover, a dotted underline appears under the name, as a hint that it's clickable. */
+.skill-name:hover {
+  text-decoration: underline dotted;
+  text-underline-offset: 0.2em;
+}
+
+/* Keyboard focus ring for the name (Tab to it, then press Enter to edit). */
+.skill-name:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* THE EDIT BOX that replaces the name while it's being edited. It's centered like the
+   name, uses the page's font and colors, and has an accent outline so it's clearly a
+   box you're typing in. width: 100% lets it use the card's full width (minus its padding). */
+.skill-name-input {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font: inherit;
+  text-align: center;
+  color: var(--color-text);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-accent);
+  border-radius: 0.375rem;
+}
+
+/* Focus ring for the edit box, matching the form boxes. */
+.skill-name-input:focus {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* THE SKILL COUNT in the heading, e.g. the "(2/5)" in "Skills (2/5)" (shown/total): bold,
+   matching the word "Skills" (font-weight 700 = bold). */
+#skill-count {
+  font-weight: 700;
+}
+
+/* THE FILTER BUTTONS (All, Learning, Practicing, Confident) above the skills list.
+   - display: flex puts them in a row; flex-wrap: wrap lets them move onto a second line
+     on narrow phone screens; gap spaces them evenly.
+   - margin-bottom leaves space between the buttons and the skill cards. */
+.skill-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+/* Each filter button: a small pill (border-radius 999px rounds the ends fully), outlined
+   in the accent color, with see-through background. cursor: pointer shows the "hand". */
+.filter-button {
+  padding: 0.35rem 0.95rem;
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-accent);
+  background: transparent;
+  border: 1px solid var(--color-accent);
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+/* On hover, a faint accent tint shows the button reacts. color-mix blends 15% accent
+   with transparent, for a very light fill. */
+.filter-button:hover {
+  background-color: color-mix(in srgb, var(--color-accent) 15%, transparent);
+}
+
+/* THE ACTIVE FILTER: filled with the accent color, with the text in the background color,
+   so it clearly stands out from the others. [aria-pressed="true"] means "the button whose
+   aria-pressed is true" (script.js sets that on the clicked button). This rule comes after
+   the hover rule, so the active button keeps its full color even with the mouse over it. */
+.filter-button[aria-pressed="true"] {
+  background-color: var(--color-accent);
+  color: var(--color-background);
+}
+
+/* Keyboard focus ring for the filter buttons. */
+.filter-button:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* WHEN A FILTER MATCHES NO SKILLS (for example "Learning" when every skill is confident),
+   show a note that says so, instead of the "No skills yet" note (section 7b). script.js
+   puts the active filter on the list as data-filter, so this applies to every filter
+   except "all". It's more specific than the "No skills yet" rule, so it wins. */
+#skill-list:not([data-filter="all"]):not(:has(li))::before {
+  content: "No skills at this level yet.";
 }
 
 /* When the mouse is over a skill card OR a project card, it rises a little:
@@ -669,6 +812,15 @@ details[open] > summary .section-arrow {
 }
 .field-row p:last-child {
   flex-grow: 2;
+}
+
+/* In the Skills Manager it's the other way around: the skill name box (first) gets the
+   extra room, and the short Level dropdown (last) stays narrower. */
+#skill-form .field-row p:first-child {
+  flex-grow: 2;
+}
+#skill-form .field-row p:last-child {
+  flex-grow: 1;
 }
 .manager .field-row p {
   margin-bottom: 1.25rem;

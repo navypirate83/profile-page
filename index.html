@@ -18,7 +18,8 @@
     3. <main>    : the main content, split into four sections. Each one starts closed:
                    click its heading (or its arrow) to open it, or use the nav links.
          - About
-         - Skills (with a Skills Manager for adding skills; each skill has a red X to delete it)
+         - Skills (built by script.js from its "skills" array, each with a level; a Skills
+           Manager adds skills; each skill has a red X to delete it)
          - Projects (with a form for adding projects; each project has a red X to delete it)
          - Contact (a form with name, email, phone, subject, message,
            a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons;
@@ -125,7 +126,8 @@
       <!-- OPEN/CLOSE BOX: <details> is HTML's built-in "show more / show less" box.
            Its first child, <summary>, is the part that's always visible and clickable:
            here, the section heading plus a small arrow. Clicking it shows everything else
-           inside <details>; clicking again hides it. No JavaScript is needed for that part.
+           inside <details>; clicking again hides it. That works even without JavaScript;
+           script.js adds a smooth 0.3-second slide when it opens and closes.
            The box starts closed (it would start open if it had the "open" attribute).
            The other sections use the same structure. -->
       <details>
@@ -145,40 +147,69 @@
     <section id="skills">
       <!-- Open/close box (see the About section for how <details> and <summary> work). -->
       <details>
-        <summary><h2>Skills</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <!-- The heading includes the skill count as "shown / total", e.g. "Skills (2/5)" means
+             2 skills match the current filter out of 5 in all. The numbers go in the empty
+             <span id="skill-count">: script.js fills it in, and updates it whenever a skill is
+             added or deleted, or a filter button is clicked. -->
+        <summary><h2>Skills <span id="skill-count"></span></h2><span class="section-arrow" aria-hidden="true"></span></summary>
 
         <!-- SKILLS MANAGER: a small form for adding a new skill to the list below.
              It's a <form>, so pressing Enter in the box adds the skill, just like clicking the button.
-             script.js handles it: it stops the page from reloading, adds the new skill to the list,
-             and clears the box. Nothing is sent anywhere.
+             script.js handles it: it stops the page from reloading, adds the new skill (its name and
+             level) to the "skills" array, and redraws the list. Nothing is sent anywhere.
              id="skill-form" = the name script.js uses to find this form.
              class="manager" = the name styles.css uses to style both "add" forms on the page.
              aria-labelledby = tells screen readers this form is named by its "Skills Manager" heading.
-             <h3> is one level below the section's <h2>, since this block sits inside the Skills section.
-             The box works like the contact form's boxes: a label, the box, and a character count under it.
-             required = the button won't add an empty skill.
-             maxlength="40" = the box stops accepting letters after 40, so a skill fits on its card. -->
+             <h3> is one level below the section's <h2>, since this block sits inside the Skills section. -->
         <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
           <h3 id="skills-manager-heading">Skills Manager</h3>
+          <!-- The name box and the level dropdown, side by side (class="field-row", the same
+               layout as the project form; they stack on narrow phone screens). -->
+          <div class="field-row">
+            <!-- SKILL NAME: works like the contact form's boxes: a label, the box, and a character
+                 count under it. required = the form won't add an empty skill.
+                 maxlength="40" = the box stops accepting letters after 40, so a skill fits on its card. -->
+            <p>
+              <label for="new-skill">Skill name</label>
+              <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+              <small class="char-count" data-for="new-skill">0</small>
+            </p>
+            <!-- LEVEL: a dropdown (<select>) with the three levels. Each <option>'s value is what
+                 gets saved with the skill; "learning" is picked by default because it's first. -->
+            <p>
+              <label for="new-skill-level">Level</label>
+              <select id="new-skill-level" name="new-skill-level">
+                <option value="learning">Learning</option>
+                <option value="practicing">Practicing</option>
+                <option value="confident">Confident</option>
+              </select>
+            </p>
+          </div>
           <p>
-            <label for="new-skill">New skill</label>
-            <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
-            <small class="char-count" data-for="new-skill">0</small>
-          </p>
-          <p>
-            <button type="submit">Add skill</button>
+            <button type="submit">Add</button>
           </p>
         </form>
 
+        <!-- FILTER BUTTONS: show only the skills at one level, or all of them.
+             role="group" with aria-label tells screen readers these buttons belong together and
+             what they're for. Each button's data-filter says which level it shows ("all" shows
+             everything). aria-pressed says whether it's the active filter ("true") or not
+             ("false"): script.js updates it on every click, screen readers announce it
+             ("pressed"), and styles.css gives the active button a filled-in background.
+             "All" starts active. The heading's count then shows "shown / total", e.g. (2/5). -->
+        <div class="skill-filters" role="group" aria-label="Filter skills by level">
+          <button type="button" class="filter-button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-button" data-filter="learning" aria-pressed="false">Learning</button>
+          <button type="button" class="filter-button" data-filter="practicing" aria-pressed="false">Practicing</button>
+          <button type="button" class="filter-button" data-filter="confident" aria-pressed="false">Confident</button>
+        </div>
+
         <!-- THE SKILLS LIST: an unordered list, since the order of the skills doesn't matter.
-             Each <li> is one skill. id="skill-list" = the name script.js uses to add and remove skills.
-             script.js adds the red X delete button to every skill, including these four. -->
-        <ul id="skill-list">
-          <li>Quality Control</li>
-          <li>Lean Six Sigma Green Belt</li>
-          <li>Database Management</li>
-          <li>Root Cause Analysis</li>
-        </ul>
+             It starts empty on purpose: the skills are listed in the "skills" array at the top of
+             script.js, and its renderSkills() function builds one <li> card per skill here when
+             the page loads (with the skill's name, a level badge, a grip handle, and a red X).
+             id="skill-list" = the name script.js uses to find this list. -->
+        <ul id="skill-list"></ul>
       </details>
     </section>
     <!-- ----- END OF SKILLS SECTION ----- -->

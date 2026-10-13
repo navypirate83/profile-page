@@ -46,26 +46,38 @@
 
     <section id="skills">
       <details>
-        <summary><h2>Skills</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <summary><h2>Skills <span id="skill-count"></span></h2><span class="section-arrow" aria-hidden="true"></span></summary>
 
         <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
           <h3 id="skills-manager-heading">Skills Manager</h3>
+          <div class="field-row">
+            <p>
+              <label for="new-skill">Skill name</label>
+              <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+              <small class="char-count" data-for="new-skill">0</small>
+            </p>
+            <p>
+              <label for="new-skill-level">Level</label>
+              <select id="new-skill-level" name="new-skill-level">
+                <option value="learning">Learning</option>
+                <option value="practicing">Practicing</option>
+                <option value="confident">Confident</option>
+              </select>
+            </p>
+          </div>
           <p>
-            <label for="new-skill">New skill</label>
-            <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
-            <small class="char-count" data-for="new-skill">0</small>
-          </p>
-          <p>
-            <button type="submit">Add skill</button>
+            <button type="submit">Add</button>
           </p>
         </form>
 
-        <ul id="skill-list">
-          <li>Quality Control</li>
-          <li>Lean Six Sigma Green Belt</li>
-          <li>Database Management</li>
-          <li>Root Cause Analysis</li>
-        </ul>
+        <div class="skill-filters" role="group" aria-label="Filter skills by level">
+          <button type="button" class="filter-button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-button" data-filter="learning" aria-pressed="false">Learning</button>
+          <button type="button" class="filter-button" data-filter="practicing" aria-pressed="false">Practicing</button>
+          <button type="button" class="filter-button" data-filter="confident" aria-pressed="false">Confident</button>
+        </div>
+
+        <ul id="skill-list"></ul>
       </details>
     </section>
 
