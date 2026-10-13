@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects | Jeffrey D. Moir</title>
+  <meta name="description" content="Projects by Jeffrey D. Moir, a career changer learning AI engineering.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232f5d8a'/%3E%3Ctext x='32' y='42' font-family='system-ui,Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f7f6f3'%3EJM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js"></script>
+</head>
+
+<body>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" data-text="Home">Home</a></li>
+      <li><a href="about.html" data-text="About">About</a></li>
+      <li><a href="projects.html" data-text="Projects" aria-current="page">Projects</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark theme">
+      <span class="theme-icon theme-sun" aria-hidden="true">☀️</span>
+      <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
+      <span class="theme-knob" aria-hidden="true"></span>
+    </button>
+
+    <h1>Projects</h1>
+    <p>What I&rsquo;m building while I learn</p>
+  </header>
+
+  <main>
+
+    <section id="projects">
+      <details open>
+        <summary><h2>Projects</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <form id="project-form" class="manager" aria-labelledby="add-project-heading">
+          <h3 id="add-project-heading">Add a project</h3>
+          <div class="field-row">
+            <p>
+              <label for="project-name">Project name</label>
+              <input type="text" id="project-name" name="project-name" maxlength="60" required>
+              <small class="char-count" data-for="project-name">0</small>
+            </p>
+            <p>
+              <label for="project-description">Project description</label>
+              <input type="text" id="project-description" name="project-description" maxlength="200" required>
+              <small class="char-count" data-for="project-description">0</small>
+            </p>
+          </div>
+          <p>
+            <button type="submit">Add project</button>
+          </p>
+        </form>
+
+        <ul id="project-list" class="project-list">
+          <li>
+            <strong>Moon Dragon Games website</strong>
+            <p>A website for Moon Dragon Games, a local game store in Everett, WA.</p>
+            <img src="images/project-screenshot.png" alt="Screenshot of the Moon Dragon Games website" width="1200" height="675" loading="lazy">
+          </li>
+        </ul>
+      </details>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Jeffrey D. Moir. All rights reserved.</p>
+  </footer>
+
+</body>
+
+</html>

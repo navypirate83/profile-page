@@ -1,30 +1,29 @@
 <!DOCTYPE html>
 <!--
   ============================================================
-  FILE OVERVIEW: index.html, the personal profile page for Jeffrey D. Moir
+  FILE OVERVIEW: index.html, the homepage of my profile site
   ============================================================
-  This file holds the page's content and structure (HTML). All of the
-  look and layout (colors, fonts, spacing) lives in a separate file,
-  styles.css, which is linked in the <head> below. The light/dark theme
-  button is powered by a small JavaScript file, script.js, also linked
-  in the <head>. No frameworks are used.
-  Comments like this one are "non-executable": the browser skips them
-  and never shows them on the page. They're notes for whoever reads the code.
+  The HOMEPAGE of my profile site: who I am, and a way to contact me.
 
   Page layout from top to bottom:
-    1. <header>  : light/dark theme slide switch (pinned to the top right), two clocks
-                   (the visitor's time and mine, added by script.js), name, tagline, and profile photo
-    2. <nav>     : navigation links (About, Skills, Projects, Contact)
-    3. <main>    : the main content, split into four sections. Each one starts closed:
-                   click its heading (or its arrow) to open it, or use the nav links.
-         - About
-         - Skills (built by script.js from its "skills" array, each with a level; a Skills
-           Manager adds skills; each skill has a red X to delete it)
-         - Projects (with a form for adding projects; each project has a red X to delete it)
-         - Contact (a form with name, email, phone, subject, message,
-           a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons;
-           each text box shows a live character count)
+    1. <nav>     : the site's navigation bar (Home, About, Projects), with "Home" highlighted
+    2. <header>  : light/dark theme slide switch (pinned to the top right), two clocks
+                   (the visitor's time and mine, added by main.js), my name, tagline, and photo
+    3. <main>    : the Contact section (a form with name, email, phone, subject, message,
+                   a subscribe checkbox, a hidden anti-spam field, and Send/Reset buttons;
+                   each text box shows a live character count). It starts open; click its
+                   heading (or its arrow) to slide it closed and open again.
     4. <footer>  : copyright line
+
+  This site has three pages, which all share the same files, kept in folders
+  by type:
+    - css/styles.css : all of the look and layout (colors, fonts, spacing)
+    - js/main.js     : all of the interactive parts (theme switch, clocks,
+                       sliding sections, forms)
+    - images/        : the pictures (my profile photo and project screenshots)
+  The CSS and JavaScript are linked in the <head> below. No frameworks are used.
+  Comments like this one are "non-executable": the browser skips them
+  and never shows them on the page. They're notes for whoever reads the code.
 
   The line above this comment, <!DOCTYPE html>, tells the browser
   "this is a modern HTML5 page." It must always be the very first line.
@@ -50,29 +49,52 @@
        follows in this attribute." %23 is the code for the # sign, which can't be typed directly
        inside this kind of link. The circle uses the same blue as the page's light-theme accent. -->
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232f5d8a'/%3E%3Ctext x='32' y='42' font-family='system-ui,Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f7f6f3'%3EJM%3C/text%3E%3C/svg%3E">
-  <!-- Links the stylesheet. rel="stylesheet" says "this file is CSS," and href is where to find it
-       (styles.css in the same folder as this page). -->
-  <link rel="stylesheet" href="styles.css">
-  <!-- Loads the JavaScript file that runs the light/dark theme slide switch and the two clocks.
+  <!-- Links the SHARED stylesheet. Every page links this same file, so the whole site looks the
+       same and a style only has to be changed in one place. rel="stylesheet" says "this file is CSS,"
+       and href is where to find it: "css/styles.css" means "the file styles.css, inside the
+       css folder that sits next to this page." -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Loads the SHARED JavaScript file, js/main.js (main.js, inside the js folder), which every page uses: it runs the theme switch, the clocks,
+       the sliding sections, and the forms (each page only uses the parts it has).
        It's placed in the <head> (and not at the end of the page) on purpose: it needs to apply
        a saved theme choice BEFORE the page appears, so the page doesn't flash the wrong colors. -->
-  <script src="script.js"></script>
+  <script src="js/main.js"></script>
 </head>
 <!-- ===== END OF HEAD ===== -->
 
 <!-- ===== BODY: everything inside here is what you actually see on the page. ===== -->
 <body>
 
-  <!-- ===== HEADER: the introductory area at the top of the page (theme switch, clocks, name, tagline, photo). ===== -->
+  <!-- ===== NAV: the site's navigation bar, at the top of every page. <nav> tells browsers and
+       screen readers "these are the main site links." The same three links are on every page. ===== -->
+  <nav>
+    <!-- An unordered list (<ul>) is the standard way to group navigation links. Each <li> is one list item. -->
+    <ul>
+      <!-- Each <a> is a link to one page of the site. href is the file it opens (all three pages
+           sit in the same folder, so just the file name is enough).
+           aria-current="page" marks the link to THE PAGE YOU'RE ON. Screen readers announce it as
+           "current page," and styles.css highlights it, so you can see where you are. Each page
+           puts it on its own link: here, "Home".
+           data-text repeats the link's word. styles.css uses it to save room for the bold
+           version of the word, so the links don't shift sideways when one turns bold.
+           (If you rename a link, change its data-text to match.) -->
+      <li><a href="index.html" data-text="Home" aria-current="page">Home</a></li>
+      <li><a href="about.html" data-text="About">About</a></li>
+      <li><a href="projects.html" data-text="Projects">Projects</a></li>
+    </ul>
+  </nav>
+  <!-- ===== END OF NAV ===== -->
+
+  <!-- ===== HEADER: the introduction at the top of the homepage (theme switch, clocks, name, tagline, photo). ===== -->
   <header>
     <!-- THEME SLIDE SWITCH: a small sliding switch that changes the page between light and dark.
          A sun sits on the left end and a moon on the right end. A round "knob" slides
          to whichever side is active. styles.css draws it and pins it to the top-right corner.
          type="button" = a plain button that runs code (it isn't part of the form and doesn't submit anything).
-         id="theme-toggle" = a unique name so script.js can find it.
+         id="theme-toggle" = a unique name so main.js can find it.
          role="switch" = tells screen readers this is an on/off switch, not an ordinary button.
          aria-checked = whether the switch is "on" ("true" = dark theme, "false" = light theme).
-           script.js flips this value on every click, and styles.css uses it to move the knob.
+           main.js flips this value on every click, and styles.css uses it to move the knob.
          aria-label = the name screen readers announce, e.g. "Dark theme, switch, off".
          Inside: three <span>s (plain containers with no meaning of their own) for the sun, the moon,
          and the knob. aria-hidden="true" hides them from screen readers, since they're only decoration. -->
@@ -82,189 +104,36 @@
       <span class="theme-knob" aria-hidden="true"></span>
     </button>
 
-    <!-- TWO CLOCKS: script.js adds them here, just above my name, when the page loads.
-         They're built by script.js (instead of being written out in this file) because they only
+    <!-- TWO CLOCKS: main.js adds them here, just above the page's <h1> heading, when the page loads.
+         They're built by main.js (instead of being written out in this file) because they only
          work with JavaScript running: this way there are never placeholder dashes or empty clocks
          on the page, and if JavaScript is off, the clocks simply don't appear.
-         See "CLOCKS" in script.js for the HTML it adds. -->
+         See "CLOCKS" in main.js for the HTML it adds. -->
 
     <!-- The main heading of the page: my name. A page should have only one <h1>. -->
     <h1>Jeffrey D. Moir</h1>
     <!-- A paragraph holding my tagline, which sits right under my name. -->
     <p>A career changer learning AI engineering</p>
-    <!-- Profile photo (a placeholder image for now).
-         src    = where the image comes from
+    <!-- Profile photo (a placeholder for now: to use a real photo, save it as images/profile.jpg,
+         replacing the placeholder, ideally square and at least 400x400 pixels).
+         src    = where the image comes from: profile.jpg, inside the images folder
          alt    = a text description, read aloud by screen readers and shown if the image fails to load
-         width/height = the image size in pixels, so the page saves the right amount of space while it loads -->
-    <img src="https://placehold.co/200x200" alt="Profile photo of Jeffrey D. Moir" width="200" height="200">
+         width/height = the size it's shown at, in pixels, so the page saves the right amount of
+                        space while it loads (the file itself is twice as big, so it stays sharp
+                        on high-resolution screens) -->
+    <img src="images/profile.jpg" alt="Profile photo of Jeffrey D. Moir" width="200" height="200">
   </header>
   <!-- ===== END OF HEADER ===== -->
-
-  <!-- ===== NAV: the navigation menu. <nav> tells browsers and screen readers "these are the main site links." ===== -->
-  <nav>
-    <!-- An unordered list (<ul>) is the standard way to group navigation links. Each <li> is one list item. -->
-    <ul>
-      <!-- Each <a> is a link. href="#about" means "jump to the element on this page with id="about"."
-           The # tells the browser to look on the same page instead of opening a new one.
-           data-text repeats the link's word. styles.css uses it to save room for the bold
-           version of the word, so the links don't shift sideways when one turns bold on hover.
-           (If you rename a link, change its data-text to match.) -->
-      <li><a href="#about" data-text="About">About</a></li>
-      <li><a href="#skills" data-text="Skills">Skills</a></li>
-      <li><a href="#projects" data-text="Projects">Projects</a></li>
-      <li><a href="#contact" data-text="Contact">Contact</a></li>
-    </ul>
-  </nav>
-  <!-- ===== END OF NAV ===== -->
 
   <!-- ===== MAIN: the central content of the page. A page should have only one <main>. ===== -->
   <main>
 
-    <!-- ----- ABOUT SECTION: a short introduction about me. A <section> groups related content under its own heading.
-         id="about" is the name the "About" nav link jumps to. ----- -->
-    <section id="about">
-      <!-- OPEN/CLOSE BOX: <details> is HTML's built-in "show more / show less" box.
-           Its first child, <summary>, is the part that's always visible and clickable:
-           here, the section heading plus a small arrow. Clicking it shows everything else
-           inside <details>; clicking again hides it. That works even without JavaScript;
-           script.js adds a smooth 0.3-second slide when it opens and closes.
-           The box starts closed (it would start open if it had the "open" attribute).
-           The other sections use the same structure. -->
-      <details>
-        <!-- The clickable heading row. <h2> is one level below the page's <h1>.
-             The arrow is drawn by styles.css; aria-hidden="true" hides it from screen readers,
-             which already announce whether the box is open or closed. -->
-        <summary><h2>About</h2><span class="section-arrow" aria-hidden="true"></span></summary>
-        <!-- A paragraph describing what I'm learning and why. -->
-        <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
-      </details>
-    </section>
-    <!-- ----- END OF ABOUT SECTION ----- -->
-
-    <!-- ----- SKILLS SECTION: a list of my professional skills, plus a Skills Manager for adding more.
-         id="skills" gives this section a unique name. The "Skills" nav link jumps here, and
-         styles.css uses it to lay out just this list as a grid. ----- -->
-    <section id="skills">
-      <!-- Open/close box (see the About section for how <details> and <summary> work). -->
-      <details>
-        <!-- The heading includes the skill count as "shown / total", e.g. "Skills (2/5)" means
-             2 skills match the current filter out of 5 in all. The numbers go in the empty
-             <span id="skill-count">: script.js fills it in, and updates it whenever a skill is
-             added or deleted, or a filter button is clicked. -->
-        <summary><h2>Skills <span id="skill-count"></span></h2><span class="section-arrow" aria-hidden="true"></span></summary>
-
-        <!-- SKILLS MANAGER: a small form for adding a new skill to the list below.
-             It's a <form>, so pressing Enter in the box adds the skill, just like clicking the button.
-             script.js handles it: it stops the page from reloading, adds the new skill (its name and
-             level) to the "skills" array, and redraws the list. Nothing is sent anywhere.
-             id="skill-form" = the name script.js uses to find this form.
-             class="manager" = the name styles.css uses to style both "add" forms on the page.
-             aria-labelledby = tells screen readers this form is named by its "Skills Manager" heading.
-             <h3> is one level below the section's <h2>, since this block sits inside the Skills section. -->
-        <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
-          <h3 id="skills-manager-heading">Skills Manager</h3>
-          <!-- The name box and the level dropdown, side by side (class="field-row", the same
-               layout as the project form; they stack on narrow phone screens). -->
-          <div class="field-row">
-            <!-- SKILL NAME: works like the contact form's boxes: a label, the box, and a character
-                 count under it. required = the form won't add an empty skill.
-                 maxlength="40" = the box stops accepting letters after 40, so a skill fits on its card. -->
-            <p>
-              <label for="new-skill">Skill name</label>
-              <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
-              <small class="char-count" data-for="new-skill">0</small>
-            </p>
-            <!-- LEVEL: a dropdown (<select>) with the three levels. Each <option>'s value is what
-                 gets saved with the skill; "learning" is picked by default because it's first. -->
-            <p>
-              <label for="new-skill-level">Level</label>
-              <select id="new-skill-level" name="new-skill-level">
-                <option value="learning">Learning</option>
-                <option value="practicing">Practicing</option>
-                <option value="confident">Confident</option>
-              </select>
-            </p>
-          </div>
-          <p>
-            <button type="submit">Add</button>
-          </p>
-        </form>
-
-        <!-- FILTER BUTTONS: show only the skills at one level, or all of them.
-             role="group" with aria-label tells screen readers these buttons belong together and
-             what they're for. Each button's data-filter says which level it shows ("all" shows
-             everything). aria-pressed says whether it's the active filter ("true") or not
-             ("false"): script.js updates it on every click, screen readers announce it
-             ("pressed"), and styles.css gives the active button a filled-in background.
-             "All" starts active. The heading's count then shows "shown / total", e.g. (2/5). -->
-        <div class="skill-filters" role="group" aria-label="Filter skills by level">
-          <button type="button" class="filter-button" data-filter="all" aria-pressed="true">All</button>
-          <button type="button" class="filter-button" data-filter="learning" aria-pressed="false">Learning</button>
-          <button type="button" class="filter-button" data-filter="practicing" aria-pressed="false">Practicing</button>
-          <button type="button" class="filter-button" data-filter="confident" aria-pressed="false">Confident</button>
-        </div>
-
-        <!-- THE SKILLS LIST: an unordered list, since the order of the skills doesn't matter.
-             It starts empty on purpose: the skills are listed in the "skills" array at the top of
-             script.js, and its renderSkills() function builds one <li> card per skill here when
-             the page loads (with the skill's name, a level badge, a grip handle, and a red X).
-             id="skill-list" = the name script.js uses to find this list. -->
-        <ul id="skill-list"></ul>
-      </details>
-    </section>
-    <!-- ----- END OF SKILLS SECTION ----- -->
-
-    <!-- ----- PROJECTS SECTION: my projects, plus a form for adding more.
-         id="projects" is the name the "Projects" nav link jumps to. ----- -->
-    <section id="projects">
-      <!-- Open/close box (see the About section for how <details> and <summary> work). -->
-      <details>
-        <summary><h2>Projects</h2><span class="section-arrow" aria-hidden="true"></span></summary>
-        <!-- ADD A PROJECT: a form with two boxes side by side (name and description) and a button.
-             It works the same way as the Skills Manager above: script.js adds the new project to the
-             list below and clears the boxes. Both boxes are required, and each has a character count.
-             maxlength keeps the name to 60 characters and the description to 200. -->
-        <form id="project-form" class="manager" aria-labelledby="add-project-heading">
-          <h3 id="add-project-heading">Add a project</h3>
-          <!-- The two boxes. class="field-row" lets styles.css place them next to each other
-               (and stack them on narrow phone screens). -->
-          <div class="field-row">
-            <p>
-              <label for="project-name">Project name</label>
-              <input type="text" id="project-name" name="project-name" maxlength="60" required>
-              <small class="char-count" data-for="project-name">0</small>
-            </p>
-            <p>
-              <label for="project-description">Project description</label>
-              <input type="text" id="project-description" name="project-description" maxlength="200" required>
-              <small class="char-count" data-for="project-description">0</small>
-            </p>
-          </div>
-          <p>
-            <button type="submit">Add project</button>
-          </p>
-        </form>
-
-        <!-- THE PROJECTS LIST: each <li> is one project, with its name in bold (<strong>) and
-             its description in a paragraph underneath.
-             id="project-list" = the name script.js uses to add and remove projects.
-             script.js adds the red X delete button to every project, including this first one. -->
-        <ul id="project-list" class="project-list">
-          <li>
-            <strong>Moon Dragon Games website</strong>
-            <p>A website for Moon Dragon Games, a local game store in Everett, WA.</p>
-          </li>
-        </ul>
-      </details>
-    </section>
-    <!-- ----- END OF PROJECTS SECTION ----- -->
-
     <!-- ----- CONTACT SECTION: a form visitors can fill out to send me a message.
-         id="contact" is the name the "Contact" nav link jumps to. ----- -->
+         id="contact" gives this section a unique name, so a link like index.html#contact can jump straight to it. ----- -->
     <section id="contact">
-      <!-- Open/close box (see the About section for how <details> and <summary> work).
-           It wraps the heading and the whole form. -->
-      <details>
+      <!-- Open/close box, starting open ("open"). It wraps the heading and the whole form.
+           The About section in about.html explains how <details> and <summary> work. -->
+      <details open>
       <summary><h2>Contact</h2><span class="section-arrow" aria-hidden="true"></span></summary>
 
       <!-- START OF CONTACT FORM: <form> groups all the fields so they get sent together when the button is clicked.
@@ -290,8 +159,8 @@
           <label for="name">Name</label>
           <input type="text" id="name" name="name" pattern="\p{L}[\p{L}\p{M}'’ .\-]*" title="Please use letters, spaces, hyphens, apostrophes, or periods." required>
           <!-- CHARACTER COUNT: the small number under the box's right edge. <small> is the HTML tag
-               for small side notes. data-for="name" tells script.js which box this counter belongs to,
-               and script.js updates the number as the visitor types. Every text box has one. -->
+               for small side notes. data-for="name" tells main.js which box this counter belongs to,
+               and main.js updates the number as the visitor types. Every text box has one. -->
           <small class="char-count" data-for="name">0</small>
         </p>
 

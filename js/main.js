@@ -1,16 +1,22 @@
 /*
   ============================================================
-  FILE OVERVIEW: script.js, the light/dark theme switch and the two clocks
+  FILE OVERVIEW: js/main.js, the SHARED JavaScript for every page of the site
   ============================================================
-  JavaScript makes the page interactive. This file does five things:
+  It lives in the js folder; each page loads it as "js/main.js".
+  JavaScript makes the pages interactive. All three pages (index.html,
+  about.html, and projects.html) load this one file. Each page only has
+  some of the parts below (for example, the skills are only on about.html),
+  so every part checks that its pieces are on the current page first, and
+  quietly does nothing if they aren't. This file does five things:
     1. THEME: picks the starting theme (a saved choice, or the computer's
        own light/dark setting), applies it right away, and switches it when
        the slide switch is clicked, remembering the choice for next time.
     2. CLOCKS: adds two clocks to the top of the page (the visitor's local
        time and my Pacific time) and updates them every second.
     3. SECTIONS: slides each section open and closed (over 0.3 seconds) when
-       its heading is clicked. A nav link first shifts the page so its section
-       is at the top, then slides the section open.
+       its heading is clicked. A link to a section on the same page (or a page
+       opened at a section, like about.html#skills) first shifts the page so the
+       section is at the top, then slides the section open if it's closed.
     4. FORMS: keeps the small character counters under each text box up to date.
     5. SKILLS AND PROJECTS: draws the skill cards from the skills array
        (renderSkills), filters them by level with the filter buttons, shows
@@ -127,7 +133,7 @@ function formatClock(date, timeZone) {
 }
 
 // Builds the two clocks and places them in the header, just above my name (<h1>).
-// They're created here instead of being written in index.html, so they only exist when
+// They're created here instead of being written in each page's HTML, so they only exist when
 // JavaScript is running, and they're filled in straight away (never empty or showing dashes).
 //   - document.createElement("p") makes a new, empty <p> paragraph.
 //   - className = "clocks" gives it the class styles.css uses to lay it out.
@@ -556,7 +562,8 @@ function editSkillName(item, nameButton) {
 let activeFilter = "all";
 
 // Draws the skills list from the skills array at the top of this file, showing only the
-// skills that match the active filter.
+// skills that match the active filter. The list is only on about.html, so on any other
+// page there's no list to draw, and "return" stops here straight away.
 //   1. shownSkills = the skills to show. filter() goes through the array and keeps only the
 //      skills whose level matches the active filter (or every skill, for "all"). It builds a
 //      NEW list: the skills array itself is never changed by filtering, so hidden skills
@@ -580,6 +587,7 @@ let activeFilter = "all";
 // and puts the cursor back in the New skill box.
 function renderSkills() {
   const list = document.getElementById("skill-list");
+  if (!list) return;
   const newSkillBox = document.getElementById("new-skill");
   const shownSkills = skills.filter((skill) => activeFilter === "all" || skill.level === activeFilter);
   document.getElementById("skill-count").textContent = `(${shownSkills.length}/${skills.length})`;
@@ -693,10 +701,14 @@ function addProject(name, description) {
 // ("{ name, level }" is a shortcut for "{ name: name, level: level }".)
 //
 // PROJECTS FORM: works the same way, and this also gives the project already written in
-// index.html its grip handle and red ✗.
+// projects.html its grip handle and red ✗.
+//
+// Each form is only on one page (the Skills Manager on about.html, the project form on
+// projects.html), so each part first checks that its form exists on this page
+// ("if (skillForm)"), and skips itself if not.
 function setUpForms() {
   const skillForm = document.getElementById("skill-form");
-  skillForm.addEventListener("submit", (event) => {
+  if (skillForm) skillForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const box = document.getElementById("new-skill");
     const name = box.value.trim();
@@ -716,7 +728,7 @@ function setUpForms() {
   });
 
   const projectForm = document.getElementById("project-form");
-  projectForm.addEventListener("submit", (event) => {
+  if (projectForm) projectForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const nameBox = document.getElementById("project-name");
     const name = nameBox.value.trim();
@@ -741,22 +753,27 @@ function setUpForms() {
 //      only show minutes, but checking every second means the minute changes within a
 //      second of the real clock.
 //   4. Sections: setUpSections() makes every section's heading slide its box open and
-//      closed. Clicking a nav link:
+//      closed. The nav bar's links open other PAGES, so the browser handles those normally.
+//      Any link to a section on the SAME page (one whose href starts with "#", like
+//      href="#skills"; a[href^="#"] means exactly that) is handled specially instead:
 //        - event.preventDefault() stops the browser jumping to the section right away
-//          (too early, while it's still closed);
+//          (too early, if it's closed);
 //        - history.pushState() still updates the address bar to end in the section's name
 //          (like .../#skills), just as a normal link would, without jumping;
 //        - goToSection() shifts the page so the section is at the top, then slides it open.
-//      If the page was opened with a link that already ends in a section name (like
-//      .../#contact), the same thing happens straight away.
+//      If a page is opened with a link that ends in a section name (like
+//      about.html#skills), the same thing happens straight away.
 //   5. Character counts: the "input" event fires on every keystroke, paste, or delete in
 //      any box on the page, so all the counters update live. The contact form's "reset"
 //      event fires when its Reset button is clicked; setTimeout(..., 0) waits until the
-//      boxes have actually been cleared, then sets the counters back to 0.
+//      boxes have actually been cleared, then sets the counters back to 0. (The contact
+//      form is only on the homepage; ?. skips this on the other pages.)
 //   6. loadSavedSkills() swaps in the visitor's saved skills (if they have any), then
 //      renderSkills() draws the skill cards from the skills array, setUpFilters()
 //      connects the filter buttons, and setUpForms() connects the Skills Manager and the
 //      Add a project form (and gives the project already on the page its grip handle and red X).
+//      Each of these only does something on the page that has its part (the skills on
+//      about.html, the projects on projects.html), and quietly skips itself elsewhere.
 document.addEventListener("DOMContentLoaded", () => {
   applyTheme(root.dataset.theme);
 
@@ -770,7 +787,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClocks();
   setInterval(updateClocks, 1000);
 
-  document.querySelectorAll("nav a").forEach((link) => {
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       history.pushState(null, "", link.hash);
@@ -781,7 +798,7 @@ document.addEventListener("DOMContentLoaded", () => {
   goToSection(location.hash);
 
   document.addEventListener("input", updateCounts);
-  document.querySelector("#contact form").addEventListener("reset", () => setTimeout(updateCounts, 0));
+  document.querySelector("#contact form")?.addEventListener("reset", () => setTimeout(updateCounts, 0));
 
   loadSavedSkills();
   renderSkills();

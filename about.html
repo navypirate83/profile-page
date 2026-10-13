@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<!--
+  ============================================================
+  FILE OVERVIEW: about.html, the About page of my profile site
+  ============================================================
+  The ABOUT page of my profile site: who I am and what my skills are.
+
+  Page layout from top to bottom:
+    1. <nav>     : the site's navigation bar (Home, About, Projects), with "About" highlighted
+    2. <header>  : light/dark theme slide switch, two clocks, and the page heading
+    3. <main>    : two sections, both starting open (click a heading to slide it closed):
+         - About
+         - Skills (built by main.js from its "skills" array, each with a level; a Skills
+           Manager adds skills; filter buttons show one level at a time; click a skill's
+           name to edit it; each skill has a red X to delete it and a grip to drag it)
+    4. <footer>  : copyright line
+
+  This site has three pages, which all share the same files, kept in folders
+  by type:
+    - css/styles.css : all of the look and layout (colors, fonts, spacing)
+    - js/main.js     : all of the interactive parts (theme switch, clocks,
+                       sliding sections, forms)
+    - images/        : the pictures (my profile photo and project screenshots)
+  The CSS and JavaScript are linked in the <head> below. No frameworks are used.
+  Comments like this one are "non-executable": the browser skips them
+  and never shows them on the page. They're notes for whoever reads the code.
+
+  The line above this comment, <!DOCTYPE html>, tells the browser
+  "this is a modern HTML5 page." It must always be the very first line.
+-->
+
+<!-- START OF PAGE: <html> wraps the whole page. lang="en" tells browsers and screen readers the page is in English. -->
+<html lang="en">
+
+<!-- ===== HEAD: information ABOUT the page. Nothing in here shows up on the page itself. ===== -->
+<head>
+  <!-- Sets the character encoding so letters, symbols, and punctuation display correctly. -->
+  <meta charset="UTF-8">
+  <!-- Makes the page fit the width of the screen, so it works on phones too. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- The text shown on the browser tab. -->
+  <title>About | Jeffrey D. Moir</title>
+  <!-- A one-sentence summary of the page. Search engines like Google show it under the page's
+       title in their results, and apps like texts, Slack, and LinkedIn often show it in link previews. -->
+  <meta name="description" content="About Jeffrey D. Moir: a career changer learning AI engineering, and the skills he brings from quality control, Lean Six Sigma, and root cause analysis.">
+  <!-- The little icon shown on the browser tab (a "favicon"): my initials, JM, in a blue circle.
+       Instead of pointing at a separate image file, the picture is written right here as SVG code
+       (SVG = a way of describing a drawing with text). "data:image/svg+xml," means "the picture
+       follows in this attribute." %23 is the code for the # sign, which can't be typed directly
+       inside this kind of link. The circle uses the same blue as the page's light-theme accent. -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232f5d8a'/%3E%3Ctext x='32' y='42' font-family='system-ui,Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f7f6f3'%3EJM%3C/text%3E%3C/svg%3E">
+  <!-- Links the SHARED stylesheet. Every page links this same file, so the whole site looks the
+       same and a style only has to be changed in one place. rel="stylesheet" says "this file is CSS,"
+       and href is where to find it: "css/styles.css" means "the file styles.css, inside the
+       css folder that sits next to this page." -->
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Loads the SHARED JavaScript file, js/main.js (main.js, inside the js folder), which every page uses: it runs the theme switch, the clocks,
+       the sliding sections, and the forms (each page only uses the parts it has).
+       It's placed in the <head> (and not at the end of the page) on purpose: it needs to apply
+       a saved theme choice BEFORE the page appears, so the page doesn't flash the wrong colors. -->
+  <script src="js/main.js"></script>
+</head>
+<!-- ===== END OF HEAD ===== -->
+
+<!-- ===== BODY: everything inside here is what you actually see on the page. ===== -->
+<body>
+
+  <!-- ===== NAV: the site's navigation bar, at the top of every page. <nav> tells browsers and
+       screen readers "these are the main site links." The same three links are on every page. ===== -->
+  <nav>
+    <!-- An unordered list (<ul>) is the standard way to group navigation links. Each <li> is one list item. -->
+    <ul>
+      <!-- Each <a> is a link to one page of the site. href is the file it opens (all three pages
+           sit in the same folder, so just the file name is enough).
+           aria-current="page" marks the link to THE PAGE YOU'RE ON. Screen readers announce it as
+           "current page," and styles.css highlights it, so you can see where you are. Each page
+           puts it on its own link: here, "About".
+           data-text repeats the link's word. styles.css uses it to save room for the bold
+           version of the word, so the links don't shift sideways when one turns bold.
+           (If you rename a link, change its data-text to match.) -->
+      <li><a href="index.html" data-text="Home">Home</a></li>
+      <li><a href="about.html" data-text="About" aria-current="page">About</a></li>
+      <li><a href="projects.html" data-text="Projects">Projects</a></li>
+    </ul>
+  </nav>
+  <!-- ===== END OF NAV ===== -->
+
+  <!-- ===== HEADER: the top of the page (theme switch, clocks, and page heading). ===== -->
+  <header>
+    <!-- THEME SLIDE SWITCH: a small sliding switch that changes the page between light and dark.
+         A sun sits on the left end and a moon on the right end. A round "knob" slides
+         to whichever side is active. styles.css draws it and pins it to the top-right corner.
+         type="button" = a plain button that runs code (it isn't part of the form and doesn't submit anything).
+         id="theme-toggle" = a unique name so main.js can find it.
+         role="switch" = tells screen readers this is an on/off switch, not an ordinary button.
+         aria-checked = whether the switch is "on" ("true" = dark theme, "false" = light theme).
+           main.js flips this value on every click, and styles.css uses it to move the knob.
+         aria-label = the name screen readers announce, e.g. "Dark theme, switch, off".
+         Inside: three <span>s (plain containers with no meaning of their own) for the sun, the moon,
+         and the knob. aria-hidden="true" hides them from screen readers, since they're only decoration. -->
+    <button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark theme">
+      <span class="theme-icon theme-sun" aria-hidden="true">☀️</span>
+      <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
+      <span class="theme-knob" aria-hidden="true"></span>
+    </button>
+
+    <!-- TWO CLOCKS: main.js adds them here, just above the page's <h1> heading, when the page loads.
+         They're built by main.js (instead of being written out in this file) because they only
+         work with JavaScript running: this way there are never placeholder dashes or empty clocks
+         on the page, and if JavaScript is off, the clocks simply don't appear.
+         See "CLOCKS" in main.js for the HTML it adds. -->
+
+    <!-- The main heading of the page. A page should have only one <h1>. -->
+    <h1>About Me</h1>
+    <!-- A short line introducing the page, styled like the homepage's tagline. -->
+    <p>My background, and the skills I&rsquo;m building</p>
+  </header>
+  <!-- ===== END OF HEADER ===== -->
+
+  <!-- ===== MAIN: the central content of the page. A page should have only one <main>. ===== -->
+  <main>
+
+    <!-- ----- ABOUT SECTION: a short introduction about me. A <section> groups related content under its own heading.
+         id="about" gives this section a unique name, so a link like about.html#about can jump straight to it. ----- -->
+    <section id="about">
+      <!-- OPEN/CLOSE BOX: <details> is HTML's built-in "show more / show less" box.
+           Its first child, <summary>, is the part that's always visible and clickable:
+           here, the section heading plus a small arrow. Clicking it shows everything else
+           inside <details>; clicking again hides it. That works even without JavaScript;
+           main.js adds a smooth 0.3-second slide when it opens and closes.
+           The "open" attribute makes the box start open, since this page is all about it
+           (without "open", it would start closed). The other sections use the same structure. -->
+      <details open>
+        <!-- The clickable heading row. <h2> is one level below the page's <h1>.
+             The arrow is drawn by styles.css; aria-hidden="true" hides it from screen readers,
+             which already announce whether the box is open or closed. -->
+        <summary><h2>About</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <!-- A paragraph describing what I'm learning and why. -->
+        <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      </details>
+    </section>
+    <!-- ----- END OF ABOUT SECTION ----- -->
+
+    <!-- ----- SKILLS SECTION: a list of my professional skills, plus a Skills Manager for adding more.
+         id="skills" gives this section a unique name, so a link like about.html#skills can jump
+         straight to it, and styles.css uses it to lay out just this list as a grid. ----- -->
+    <section id="skills">
+      <!-- Open/close box (see the About section for how <details> and <summary> work). -->
+      <details open>
+        <!-- The heading includes the skill count as "shown / total", e.g. "Skills (2/5)" means
+             2 skills match the current filter out of 5 in all. The numbers go in the empty
+             <span id="skill-count">: main.js fills it in, and updates it whenever a skill is
+             added or deleted, or a filter button is clicked. -->
+        <summary><h2>Skills <span id="skill-count"></span></h2><span class="section-arrow" aria-hidden="true"></span></summary>
+
+        <!-- SKILLS MANAGER: a small form for adding a new skill to the list below.
+             It's a <form>, so pressing Enter in the box adds the skill, just like clicking the button.
+             main.js handles it: it stops the page from reloading, adds the new skill (its name and
+             level) to the "skills" array, and redraws the list. Nothing is sent anywhere.
+             id="skill-form" = the name main.js uses to find this form.
+             class="manager" = the name styles.css uses to style both "add" forms on the page.
+             aria-labelledby = tells screen readers this form is named by its "Skills Manager" heading.
+             <h3> is one level below the section's <h2>, since this block sits inside the Skills section. -->
+        <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
+          <h3 id="skills-manager-heading">Skills Manager</h3>
+          <!-- The name box and the level dropdown, side by side (class="field-row", the same
+               layout as the project form; they stack on narrow phone screens). -->
+          <div class="field-row">
+            <!-- SKILL NAME: works like the contact form's boxes: a label, the box, and a character
+                 count under it. required = the form won't add an empty skill.
+                 maxlength="40" = the box stops accepting letters after 40, so a skill fits on its card. -->
+            <p>
+              <label for="new-skill">Skill name</label>
+              <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+              <small class="char-count" data-for="new-skill">0</small>
+            </p>
+            <!-- LEVEL: a dropdown (<select>) with the three levels. Each <option>'s value is what
+                 gets saved with the skill; "learning" is picked by default because it's first. -->
+            <p>
+              <label for="new-skill-level">Level</label>
+              <select id="new-skill-level" name="new-skill-level">
+                <option value="learning">Learning</option>
+                <option value="practicing">Practicing</option>
+                <option value="confident">Confident</option>
+              </select>
+            </p>
+          </div>
+          <p>
+            <button type="submit">Add</button>
+          </p>
+        </form>
+
+        <!-- FILTER BUTTONS: show only the skills at one level, or all of them.
+             role="group" with aria-label tells screen readers these buttons belong together and
+             what they're for. Each button's data-filter says which level it shows ("all" shows
+             everything). aria-pressed says whether it's the active filter ("true") or not
+             ("false"): main.js updates it on every click, screen readers announce it
+             ("pressed"), and styles.css gives the active button a filled-in background.
+             "All" starts active. The heading's count then shows "shown / total", e.g. (2/5). -->
+        <div class="skill-filters" role="group" aria-label="Filter skills by level">
+          <button type="button" class="filter-button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-button" data-filter="learning" aria-pressed="false">Learning</button>
+          <button type="button" class="filter-button" data-filter="practicing" aria-pressed="false">Practicing</button>
+          <button type="button" class="filter-button" data-filter="confident" aria-pressed="false">Confident</button>
+        </div>
+
+        <!-- THE SKILLS LIST: an unordered list, since the order of the skills doesn't matter.
+             It starts empty on purpose: the skills are listed in the "skills" array at the top of
+             main.js, and its renderSkills() function builds one <li> card per skill here when
+             the page loads (with the skill's name, a level badge, a grip handle, and a red X).
+             id="skill-list" = the name main.js uses to find this list. -->
+        <ul id="skill-list"></ul>
+      </details>
+    </section>
+    <!-- ----- END OF SKILLS SECTION ----- -->
+
+  </main>
+  <!-- ===== END OF MAIN ===== -->
+
+  <!-- ===== FOOTER: the closing area at the bottom of the page, usually for copyright and contact info. ===== -->
+  <footer>
+    <!-- Copyright line. &copy; is a special code that displays the © symbol. -->
+    <p>&copy; 2026 Jeffrey D. Moir. All rights reserved.</p>
+  </footer>
+  <!-- ===== END OF FOOTER ===== -->
+
+</body>
+<!-- ===== END OF BODY ===== -->
+
+</html>
+<!-- END OF PAGE -->

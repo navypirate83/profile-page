@@ -1,7 +1,13 @@
 /*
   ============================================================
-  FILE OVERVIEW: styles.css, the look and layout for index.html
+  FILE OVERVIEW: css/styles.css, the SHARED look and layout for every page of the site
   ============================================================
+  It lives in the css folder; each page links it as "css/styles.css".
+  All three pages (index.html, about.html, and projects.html) link this one
+  file, so the whole site looks the same, and a style only has to be changed
+  in one place. Rules for parts that are only on one page (like the skill
+  cards on about.html) simply have nothing to style on the other pages.
+
   CSS (Cascading Style Sheets) controls how the page looks: colors,
   fonts, spacing, and layout. Each "rule" has two parts:
     - a selector (WHICH elements to style, e.g. "nav ul")
@@ -15,7 +21,7 @@
     3. Headings and text
     4. Header (clocks, name, tagline, photo)
    4b. Theme slide switch (top right)
-    5. Navigation (flexbox)
+    5. Navigation bar (flexbox), including the highlighted current-page link
     6. Main sections (spacing, and the open/close heading rows with arrows)
     7. Skills (grid, the level badge, the click-to-edit name, the skill count, and the filter buttons)
    7b. Skills Manager (with its level dropdown), project list, the red X delete buttons,
@@ -64,7 +70,7 @@
 
 /* DARK THEME: the same color names, given dark-mode values.
    :root[data-theme="dark"] means "the <html> element, but only when it has
-   data-theme="dark"." script.js adds that when dark mode is chosen.
+   data-theme="dark"." main.js adds that when dark mode is chosen.
    Because every rule below uses var(--color-...), swapping these values
    recolors the whole page at once.
    The accent is a lighter blue here, because the original dark blue would be
@@ -357,7 +363,7 @@ header img {
 
 /* LIGHT THEME (aria-checked="false"): the sun is the active icon, so it's shown at full strength.
    [aria-checked="false"] means "only when the switch has aria-checked set to false."
-   script.js sets that value. */
+   main.js sets that value. */
 #theme-toggle[aria-checked="false"] .theme-sun {
   opacity: 1;
 }
@@ -396,7 +402,8 @@ header img {
 
 /* ===== 5. NAVIGATION (flexbox) ===== */
 
-/* The nav bar: thin lines above and below frame the links, with space around them.
+/* The nav bar, at the top of every page: thin lines above and below frame the links,
+   with space around them.
    container-type: inline-size turns the nav into a "container": the rules below can
    then measure the NAV's own width (not the whole screen's) and react to it. That's
    what lets the links squeeze together and then stack at exactly the right moment. */
@@ -460,7 +467,7 @@ nav a {
 /* THE "NO SHIFTING" TRICK: bold letters are wider than normal ones, so a word that turns
    bold on hover would get wider and push the other links sideways.
    To prevent that, ::after adds an invisible bold copy of the word (taken from the
-   link's data-text in index.html) underneath the real one.
+   link's data-text in each page's HTML) underneath the real one.
    - content: attr(data-text) = use the data-text value as the copy's text.
    - visibility: hidden and height: 0 = the copy is invisible and takes no height,
      but it still takes up its full bold WIDTH.
@@ -480,6 +487,21 @@ nav a:hover,
 nav a:focus-visible {
   font-weight: 700;
 }
+
+/* THE CURRENT PAGE'S LINK: highlighted so you can see which page you're on.
+   Each page marks its own link with aria-current="page" in its HTML, and
+   [aria-current="page"] means "only the link that has that."
+   - It's filled with the accent color, with the text in the background color (like the
+     active filter button), and bold.
+   - border-radius rounds the corners of the filled area, so it looks like a soft tab.
+   Its own bold version is already the width saved by the "no shifting" trick above,
+   so the highlighted link doesn't push the others sideways. */
+nav a[aria-current="page"] {
+  font-weight: 700;
+  color: var(--color-background);
+  background-color: var(--color-accent);
+  border-radius: 0.375rem;
+}
 /* ===== END OF NAVIGATION ===== */
 
 
@@ -488,7 +510,7 @@ nav a:focus-visible {
 /* The page's sections. "main section" means "sections inside <main>."
    - margin-bottom: space below every section, so the headings don't crowd each other
      when the sections are closed.
-   - scroll-margin-top: leaves 1.5rem of space above a section when a nav link jumps
+   - scroll-margin-top: leaves 1.5rem of space above a section when a link jumps
      to it, so its heading doesn't sit pressed against the very top edge of the screen. */
 main section {
   margin-bottom: 2rem;
@@ -588,7 +610,7 @@ details[open] > summary .section-arrow {
   padding: 0;
 }
 
-/* Each skill becomes a small raised card (script.js builds these from its "skills" array):
+/* Each skill becomes a small raised card (main.js builds these from its "skills" array):
    an accent-colored outline, rounded corners, padding inside, and centered text.
    - display: flex with flex-direction: column stacks the skill's name above its level
      badge, and align-items: center centers them; gap puts a little space between.
@@ -616,7 +638,7 @@ details[open] > summary .section-arrow {
    A small pill shape: tiny capital letters with a little letter spacing, in the accent
    color, inside a rounded outline (border-radius: 999px rounds the ends fully).
    The three levels look different, so they can be told apart at a glance. Each card's
-   data-level (set by script.js) picks the look. [data-level="learning"] means "a card
+   data-level (set by main.js) picks the look. [data-level="learning"] means "a card
    whose data-level is learning." The badges get more "filled in" as the level goes up: */
 .skill-level {
   padding: 0.1rem 0.6rem;
@@ -642,7 +664,7 @@ details[open] > summary .section-arrow {
   color: var(--color-background);
 }
 
-/* THE CLICKABLE SKILL NAME (script.js makes it a button, so it can be clicked to edit).
+/* THE CLICKABLE SKILL NAME (main.js makes it a button, so it can be clicked to edit).
    It's styled to look like the plain text it replaced: no button border or background,
    the page's font and text color (inherit = "use the same as the card").
    cursor: text shows the I-shaped "typing" pointer, a hint that the text can be edited. */
@@ -727,7 +749,7 @@ details[open] > summary .section-arrow {
 
 /* THE ACTIVE FILTER: filled with the accent color, with the text in the background color,
    so it clearly stands out from the others. [aria-pressed="true"] means "the button whose
-   aria-pressed is true" (script.js sets that on the clicked button). This rule comes after
+   aria-pressed is true" (main.js sets that on the clicked button). This rule comes after
    the hover rule, so the active button keeps its full color even with the mouse over it. */
 .filter-button[aria-pressed="true"] {
   background-color: var(--color-accent);
@@ -741,7 +763,7 @@ details[open] > summary .section-arrow {
 }
 
 /* WHEN A FILTER MATCHES NO SKILLS (for example "Learning" when every skill is confident),
-   show a note that says so, instead of the "No skills yet" note (section 7b). script.js
+   show a note that says so, instead of the "No skills yet" note (section 7b). main.js
    puts the active filter on the list as data-filter, so this applies to every filter
    except "all". It's more specific than the "No skills yet" rule, so it wins. */
 #skill-list:not([data-filter="all"]):not(:has(li))::before {
@@ -862,6 +884,20 @@ details[open] > summary .section-arrow {
   margin: 0;
 }
 
+/* A project's screenshot (from the images folder), under its description.
+   - display: block puts it on its own line, and width: 100% with height: auto makes it
+     fill the card's width while keeping its shape.
+   - margin-top leaves a little space under the description.
+   - The thin accent border and rounded corners frame it like the cards themselves. */
+.project-list img {
+  display: block;
+  width: 100%;
+  height: auto;
+  margin-top: 0.75rem;
+  border: 1px solid var(--color-accent);
+  border-radius: 0.375rem;
+}
+
 /* EMPTY LISTS: when every item has been deleted, show a short note instead of nothing.
    :has(li) means "contains a list item," so :not(:has(li)) means "has no items left."
    ::before adds text from CSS (content: "...") at the start of the list. */
@@ -875,7 +911,7 @@ details[open] > summary .section-arrow {
 }
 
 /* THE RED X DELETE BUTTON on every skill and project.
-   The button shows the "✗" character (added by script.js) in the error red, with no
+   The button shows the "✗" character (added by main.js) in the error red, with no
    border or background, so only the X itself is visible.
    - position: absolute with top/right pins it to the card's top-right corner.
    - width/height make a small square to click (1.75rem, about 28px).
@@ -925,7 +961,7 @@ details[open] > summary .section-arrow {
     transform: none;
   }
 }
-/* THE GRIP HANDLE ("⠿", added by script.js) in each card's top-left corner, used to drag
+/* THE GRIP HANDLE ("⠿", added by main.js) in each card's top-left corner, used to drag
    the card into a new order. It mirrors the delete button in the opposite corner.
    - cursor: grab shows an open-hand mouse pointer, a hint that it can be picked up.
    - touch-action: none tells phones and tablets that a finger pressing the grip is
@@ -966,14 +1002,14 @@ details[open] > summary .section-arrow {
 }
 
 /* THE CARD BEING DRAGGED: see-through, with a dashed outline, so it's clear which card
-   is moving. (script.js adds the "dragging" class while the card is held.) */
+   is moving. (main.js adds the "dragging" class while the card is held.) */
 .dragging {
   opacity: 0.55;
   outline: 2px dashed var(--color-accent);
   outline-offset: 2px;
 }
 
-/* WHILE ANY DRAG IS HAPPENING (script.js puts "is-dragging" on the <html> element):
+/* WHILE ANY DRAG IS HAPPENING (main.js puts "is-dragging" on the <html> element):
    - the mouse pointer is a closed "grabbing" hand everywhere on the page, and
    - user-select: none stops text on the page from getting highlighted by accident. */
 .is-dragging,
@@ -1072,7 +1108,7 @@ form textarea::placeholder {
 
 /* RED EMAIL TEXT: while the email box holds something that isn't a proper email address
    yet, its text is red. :invalid means "a form box whose current value breaks its rules"
-   (here, type="email" plus the pattern in index.html). As soon as the address is complete,
+   (here, type="email" plus the pattern in index.html's contact form). As soon as the address is complete,
    e.g. name@example.com, it's no longer :invalid and the text goes back to normal.
    An empty box technically counts as :invalid too (it's required), but with no text in it
    there's nothing to turn red.

@@ -288,6 +288,7 @@ let activeFilter = "all";
 
 function renderSkills() {
   const list = document.getElementById("skill-list");
+  if (!list) return;
   const newSkillBox = document.getElementById("new-skill");
   const shownSkills = skills.filter((skill) => activeFilter === "all" || skill.level === activeFilter);
   document.getElementById("skill-count").textContent = `(${shownSkills.length}/${skills.length})`;
@@ -360,7 +361,7 @@ function addProject(name, description) {
 
 function setUpForms() {
   const skillForm = document.getElementById("skill-form");
-  skillForm.addEventListener("submit", (event) => {
+  if (skillForm) skillForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const box = document.getElementById("new-skill");
     const name = box.value.trim();
@@ -380,7 +381,7 @@ function setUpForms() {
   });
 
   const projectForm = document.getElementById("project-form");
-  projectForm.addEventListener("submit", (event) => {
+  if (projectForm) projectForm.addEventListener("submit", (event) => {
     event.preventDefault();
     const nameBox = document.getElementById("project-name");
     const name = nameBox.value.trim();
@@ -405,7 +406,7 @@ document.addEventListener("DOMContentLoaded", () => {
   updateClocks();
   setInterval(updateClocks, 1000);
 
-  document.querySelectorAll("nav a").forEach((link) => {
+  document.querySelectorAll('a[href^="#"]').forEach((link) => {
     link.addEventListener("click", (event) => {
       event.preventDefault();
       history.pushState(null, "", link.hash);
@@ -416,7 +417,7 @@ document.addEventListener("DOMContentLoaded", () => {
   goToSection(location.hash);
 
   document.addEventListener("input", updateCounts);
-  document.querySelector("#contact form").addEventListener("reset", () => setTimeout(updateCounts, 0));
+  document.querySelector("#contact form")?.addEventListener("reset", () => setTimeout(updateCounts, 0));
 
   loadSavedSkills();
   renderSkills();

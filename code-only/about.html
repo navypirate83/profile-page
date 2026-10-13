@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About | Jeffrey D. Moir</title>
+  <meta name="description" content="About Jeffrey D. Moir: a career changer learning AI engineering, and the skills he brings from quality control, Lean Six Sigma, and root cause analysis.">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='32' fill='%232f5d8a'/%3E%3Ctext x='32' y='42' font-family='system-ui,Segoe UI,Arial,sans-serif' font-size='28' font-weight='700' text-anchor='middle' fill='%23f7f6f3'%3EJM%3C/text%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/styles.css">
+  <script src="js/main.js"></script>
+</head>
+
+<body>
+
+  <nav>
+    <ul>
+      <li><a href="index.html" data-text="Home">Home</a></li>
+      <li><a href="about.html" data-text="About" aria-current="page">About</a></li>
+      <li><a href="projects.html" data-text="Projects">Projects</a></li>
+    </ul>
+  </nav>
+
+  <header>
+    <button type="button" id="theme-toggle" role="switch" aria-checked="false" aria-label="Dark theme">
+      <span class="theme-icon theme-sun" aria-hidden="true">☀️</span>
+      <span class="theme-icon theme-moon" aria-hidden="true">🌙</span>
+      <span class="theme-knob" aria-hidden="true"></span>
+    </button>
+
+    <h1>About Me</h1>
+    <p>My background, and the skills I&rsquo;m building</p>
+  </header>
+
+  <main>
+
+    <section id="about">
+      <details open>
+        <summary><h2>About</h2><span class="section-arrow" aria-hidden="true"></span></summary>
+        <p>I am a student of the AI Mastery course, learning how to write my websites and applications using AI while understanding what is written rather than just trusting the AI to do it for me.</p>
+      </details>
+    </section>
+
+    <section id="skills">
+      <details open>
+        <summary><h2>Skills <span id="skill-count"></span></h2><span class="section-arrow" aria-hidden="true"></span></summary>
+
+        <form id="skill-form" class="manager" aria-labelledby="skills-manager-heading">
+          <h3 id="skills-manager-heading">Skills Manager</h3>
+          <div class="field-row">
+            <p>
+              <label for="new-skill">Skill name</label>
+              <input type="text" id="new-skill" name="new-skill" maxlength="40" required>
+              <small class="char-count" data-for="new-skill">0</small>
+            </p>
+            <p>
+              <label for="new-skill-level">Level</label>
+              <select id="new-skill-level" name="new-skill-level">
+                <option value="learning">Learning</option>
+                <option value="practicing">Practicing</option>
+                <option value="confident">Confident</option>
+              </select>
+            </p>
+          </div>
+          <p>
+            <button type="submit">Add</button>
+          </p>
+        </form>
+
+        <div class="skill-filters" role="group" aria-label="Filter skills by level">
+          <button type="button" class="filter-button" data-filter="all" aria-pressed="true">All</button>
+          <button type="button" class="filter-button" data-filter="learning" aria-pressed="false">Learning</button>
+          <button type="button" class="filter-button" data-filter="practicing" aria-pressed="false">Practicing</button>
+          <button type="button" class="filter-button" data-filter="confident" aria-pressed="false">Confident</button>
+        </div>
+
+        <ul id="skill-list"></ul>
+      </details>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>&copy; 2026 Jeffrey D. Moir. All rights reserved.</p>
+  </footer>
+
+</body>
+
+</html>
